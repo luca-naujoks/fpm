@@ -1,4 +1,4 @@
-FROM node:24-alpine AS deps
+FROM node:24-slim AS deps
 
 # set the working directory to /app
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY package*.json ./
 RUN npm install
 
 
-FROM node:24-alpine AS builder
+FROM node:24-slim AS builder
 
 # set the working directory to /app
 WORKDIR /app
@@ -29,7 +29,7 @@ RUN npx prisma migrate deploy --schema=./prisma/schema.prisma
 # build the next app
 RUN npm run build
 
-FROM node:24-alpine AS prod
+FROM node:24-slim AS prod
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
