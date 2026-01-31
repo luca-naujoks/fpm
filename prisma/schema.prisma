@@ -1,0 +1,29 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output = "./generated"
+  engineType = "client"
+  runtime = "bun"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Projects {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+  budget      Float   @default(50)
+}
+
+model Transactions {
+  id                     Int      @id @default(autoincrement())
+  projectId              Int
+  transactionDescription String
+  transactionType        String
+  transactionAmount      Float
+  transactionDate        DateTime
+  monthly                Boolean  @default(false)
+  deleted                Boolean  @default(false)
+}
