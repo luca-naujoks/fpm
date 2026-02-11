@@ -189,7 +189,7 @@ export async function editTransaction(formData: FormData) {
             where: {id: parseFloat(id)}, data: {
                 transactionAmount: parseFloat(amount),
                 transactionDescription: description,
-                ...(transactionDate !== undefined ? { transactionDate } : {})
+                ...(transactionDate !== undefined ? {transactionDate} : {})
             }
         })
         return {success: true}
@@ -215,4 +215,12 @@ export async function deleteTransaction(transactionId: number) {
     } catch (e) {
         return {error: e};
     }
+}
+
+export async function getAllIncomes(): Promise<transaction[]> {
+    return db.transactions.findMany({where: {transactionType: "income", deleted: false}});
+}
+
+export async function getAllExpenses(): Promise<transaction[]> {
+    return db.transactions.findMany({where: {transactionType: "expense", deleted: false}});
 }

@@ -1,8 +1,8 @@
 "use client"
 
 import {Button} from "@/components/ui/button";
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {createProject, deleteProject, editProject, getProjects} from "@/app/actions"; // Assuming editProject exists
+import React, {useState} from "react";
+import {createProject, deleteProject, editProject} from "@/app/actions"; // Assuming editProject exists
 import {
     Dialog,
     DialogContent,
@@ -14,56 +14,41 @@ import {
 } from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
-import {useRouter} from "next/dist/client/components/navigation";
 import {project} from "@/interfaces";
 import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
 
-export function ProjectComponent({selectedProject, setSelectedProject}: {
+export interface ProjectComponentProps {
     selectedProject: project,
-    setSelectedProject: Dispatch<SetStateAction<project>>
-}) {
-    const router = useRouter()
-    const [projects, setProjects] = useState<project[]>([])
+    setSelectedProject: React.Dispatch<React.SetStateAction<project>>
+    projects: project[]
+    refreshProjects: () => void
+}
 
-    // 1. Lifted state for the project currently being edited
+export function ProjectComponent({props}: { props: ProjectComponentProps }) {
     const [editingProject, setEditingProject] = useState<project | null>(null);
 
-    useEffect(() => {
-        async function fetch(): Promise<void> {
-            const projects = await getProjects()
-            setProjects(projects)
-        }
-
-        fetch()
-    }, []);
-
     function handleProjectSwitch(project: project) {
-        setSelectedProject(project)
-        router.push("?project=" + project.id)
-    }
-
-    async function refetchProjects() {
-        const projects: project[] = await getProjects()
-        setProjects(projects)
+        props.setSelectedProject(project)
     }
 
     return (
-        <div className="w-64 min-h-1/2 bg-card border-sidebar-border border rounded-lg shadow p-4 mr-8">
-            <span className={"flex gap-2 justify-between items-center mb-2"}>
-                <h2>Projects</h2>
-                <AddProjectButton refresh={refetchProjects}/>
-            </span>
-            <div className={"flex flex-col gap-2"}>
-                <Button variant={"secondary"} className={"w-full "}
+        <Card className="w-64 mr-8 text-muted-foreground">
+            <CardHeader className={"flex justify-between w-full"}>
+                <h2 className={"text-start"}>Projects</h2>
+                <AddProjectButton refresh={() => props.refreshProjects()}/>
+            </CardHeader>
+            <CardContent className={"flex flex-col gap-2"}>
+                <Button variant={"secondary"} className={"w-full text-muted-foreground"}
                         onClick={() => handleProjectSwitch({id: 0} as project)}
-                        disabled={selectedProject.id == 0}>Home</Button>
+                        disabled={props.selectedProject.id == 0}>Home</Button>
 
-                {projects.map((p) => (
+                {props.projects.map((p) => (
                     <ContextMenu key={p.id}>
                         <ContextMenuTrigger>
-                            <Button variant={"secondary"} className={"w-full "}
+                            <Button variant={"secondary"} className={"w-full text-muted-foreground"}
                                     onClick={() => handleProjectSwitch(p)}
-                                    disabled={selectedProject.id == p.id}>{p.name}
+                                    disabled={props.selectedProject.id == p.id}>{p.name}
                             </Button>
                         </ContextMenuTrigger>
                         <ContextMenuContent>
@@ -71,28 +56,25 @@ export function ProjectComponent({selectedProject, setSelectedProject}: {
                                 Edit
                             </ContextMenuItem>
                             <ContextMenuItem variant={"destructive"} onClick={() => {
-                                deleteProject(p.id);
-                                setProjects((prev) => prev.filter((proj) => proj.id !== p.id))
+                                deleteProject(p.id).then(() => props.refreshProjects());
                             }}>Delete</ContextMenuItem>
                         </ContextMenuContent>
                     </ContextMenu>
                 ))}
-            </div>
-
-            {/* 2. Single Edit Dialog Instance */}
+            </CardContent>
             {editingProject && (
                 <EditProject
                     project={editingProject}
                     open={!!editingProject}
                     onOpenChange={(open) => !open && setEditingProject(null)}
-                    refresh={refetchProjects}
+                    refresh={() => props.refreshProjects()}
                 />
             )}
-        </div>
+        </Card>
     )
 }
 
-// 3. Move outside to prevent focus loss/re-mounting
+
 function EditProject({project, open, onOpenChange, refresh}: {
     project: project,
     open: boolean,

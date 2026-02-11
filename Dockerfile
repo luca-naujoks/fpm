@@ -50,9 +50,6 @@ COPY --from=builder /app/prisma.config.ts ./
 # expose port 3000
 EXPOSE 3000
 
-# set port 3000 to env
-ENV PORT=3000
-
 # command to run migrations on startup and then start the app
 ENV HOSTNAME="0.0.0.0"
 CMD npx prisma migrate deploy --schema=./prisma/schema.prisma && node server.js

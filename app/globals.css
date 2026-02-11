@@ -123,6 +123,10 @@
     }
 
     h2 {
-        @apply text-xl font-semibold mb-2
+        @apply text-xl font-semibold mb-2 text-muted-foreground
+    }
+
+    span {
+        @apply text-xs
     }
 }

@@ -44,4 +44,4 @@ generated/
 
 .idea/
 
-/prisma/dev.db
+dev.db

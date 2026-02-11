@@ -1,10 +1,10 @@
 "use client"
-import {ProjectComponent} from "@/components/projects";
+import {ProjectComponent, ProjectComponentProps} from "@/components/projects";
 import {TransactionComponent} from "@/components/transactions";
-import {Suspense, useEffect, useState} from "react";
-import {useSearchParams} from "next/dist/client/components/navigation";
-import {getProject} from "@/app/actions";
+import React, {Suspense, useEffect, useState} from "react";
+import {getProjects} from "@/app/actions";
 import {project} from "@/interfaces";
+import {ProjectOverview} from "@/components/projectOverview";
 
 export default function Page() {
     return (
@@ -15,31 +15,48 @@ export default function Page() {
 }
 
 function ProjectsPage() {
-    const projectId = useSearchParams().get("project")
-    const id = projectId != null ? parseInt(projectId) : 0
-    const [selectedProject, setSelectedProject] = useState<project>({} as project)
+    const homeProject: project = {
+        id: 0,
+        name: "",
+        description: "",
+        budget: 0
+    }
+
+    const [selectedProject, setSelectedProject] = useState<project>(homeProject)
+    const [projects, setProjects] = useState<project[]>([])
 
 
     useEffect(() => {
         async function fetch(): Promise<void> {
-            const projects = await getProject(id)
-            setSelectedProject(projects)
+            const projects: project[] = await getProjects()
+            setProjects(projects)
         }
 
-        fetch()
+        fetch().then()
     }, []);
 
+    async function refetchProjects() {
+        const projects: project[] = await getProjects()
+        setProjects(projects)
+    }
+
+    const projectComponentProps: ProjectComponentProps = {
+        selectedProject: selectedProject,
+        setSelectedProject: setSelectedProject,
+        refreshProjects: refetchProjects,
+        projects: projects
+
+    }
 
     return (
-        <div className="max-w-screen max-h-screen h-screen p-8">
-            <h1 className="text-2xl pb-4 font-bold h-[5%]">Project Financial Manager</h1>
-
-
-            <div className={"flex gap-2 h-[90%]"}>
-                <ProjectComponent selectedProject={selectedProject} setSelectedProject={setSelectedProject}/>
-                <TransactionComponent project={selectedProject}/>
+        <div className="flex max-w-screen max-h-screen h-screen p-4">
+            <ProjectComponent props={projectComponentProps}/>
+            <div id={"project_space"} className={"w-full"}>
+                {selectedProject.id == 0 ?
+                    <ProjectOverview projects={projects}/> :
+                    <TransactionComponent project={selectedProject}/>
+                }
             </div>
         </div>
     );
 }
-

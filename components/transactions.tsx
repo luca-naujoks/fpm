@@ -117,10 +117,10 @@ export function TransactionComponent({project}: { project: project }) {
     }
 
     return (
-        <div className="w-full bg-card border-sidebar-border border rounded-lg shadow p-4 mr-8">
-            <span className={"flex gap-2 justify-between items-center mb-2"}>
+        <div className="w-full bg-card border-sidebar-border border rounded-lg shadow p-4 text-primary">
+            <span className={"flex gap-2 justify-between items-center mb-4 pb-2 border-b-2 border-sidebar-border"}>
                 <div>
-                    <h2>Project Transactions</h2>
+                    <h2>{project.name}</h2>
                     <p>Monthly Budget: {formattedBudget}</p>
                     <p className={project.id === 0 ? "hidden" : ""}>Available Budget: <span
                         className={availableBudget > 0 ? "text-chart-2" : "text-chart-3"}>€{formattedAvailable}</span></p>
