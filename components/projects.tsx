@@ -17,6 +17,7 @@ import {Input} from "@/components/ui/input";
 import {project} from "@/interfaces";
 import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
+import {Checkbox} from "@/components/ui/checkbox";
 
 export interface ProjectComponentProps {
     selectedProject: project,
@@ -134,8 +135,12 @@ function EditProject({project, open, onOpenChange, refresh}: {
 
 function AddProjectButton({refresh}: { refresh: () => void }) {
     const [open, setOpen] = useState(false);
+    const [budgetEnabled, setBudgetEnabled] = useState(true);
 
     async function handleAction(formData: FormData) {
+        if (!budgetEnabled) {
+            formData.set("budget", "0");
+        }
         const result = await createProject(formData);
         if (result?.success) {
             setOpen(false);
@@ -166,10 +171,19 @@ function AddProjectButton({refresh}: { refresh: () => void }) {
                             <Label htmlFor="description">Description</Label>
                             <Input id="description" name="description" placeholder="All expenses..."/>
                         </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="budget">Monthly Income/Budget</Label>
-                            <Input id="budget" name="budget" type="number" defaultValue={100}/>
+                        <div className={"flex gap-4 items-center"}>
+                            <Checkbox
+                                checked={budgetEnabled}
+                                onCheckedChange={(checked) => setBudgetEnabled(checked as boolean)}
+                            />
+                            <Label>Enable Monthly budget addition</Label>
                         </div>
+                        {budgetEnabled && (
+                            <div className={"grid gap-3 "}>
+                                <Label htmlFor="budget">Monthly Income/Budget</Label>
+                                <Input id="budget" name="budget" type="number" defaultValue={100}/>
+                            </div>
+                        )}
                     </div>
 
                     <DialogFooter>

@@ -58,13 +58,13 @@ export function ProjectOverview({projects}: { projects: project[] }) {
             <CardHeader>
                 <h2 className={"text-muted-foreground"}>Project Overview</h2>
             </CardHeader>
-            <CardContent className={"grid grid-cols-4 gap-4"}>
-                <StatusCard title={"Total Budget"} value={totalBudget + "€"}
+            <CardContent className={"h-full grid grid-cols-4 grid-rows-4 gap-4"}>
+                <StatusCard title={"Total Budget"} value={totalBudget.toFixed(2) + "€"}
                             footer={`Across ${projects.length} projects`}/>
-                <StatusCard title={"Total Spend"} value={totalExpenses + "€"}
+                <StatusCard title={"Total Spend"} value={totalExpenses.toFixed(2) + "€"}
                             footer={`Across ${projects.length} projects`}
                             color={"destructive"}/>
-                <StatusCard title={"Remaining"} value={totalRemaining + "€"}
+                <StatusCard title={"Remaining"} value={totalRemaining.toFixed(2) + "€"}
                             footer={`Across ${projects.length} projects`} color={"positive"}/>
                 <StatusCard title={"Active Projects"} value={projects.length} footer={``}/>
 
@@ -77,10 +77,11 @@ export function ProjectOverview({projects}: { projects: project[] }) {
 
                     </CardContent>
                 </Card>
-                <Card className={"col-span-2 text-muted-foreground hidden"}>
+                <Card className={"col-span-2 text-muted-foreground"}>
                     <CardHeader>
                         <h2>Spending by Project</h2>
                         <span>Expenses by Project</span>
+                        <span>Update</span>
                     </CardHeader>
                     <CardContent>
                     </CardContent>

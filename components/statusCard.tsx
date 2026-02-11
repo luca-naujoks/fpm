@@ -20,12 +20,12 @@ export function StatusCard({title, value, footer, color}: {
     }
 
     return (
-        <Card className={"text-muted-foreground"}>
+        <Card className={"text-muted-foreground gap-2 xl:gap-6"}>
             <CardHeader>
                 <h2>{title}</h2>
             </CardHeader>
             <CardContent>
-                <h1 className={"text-5xl font-semibold " + colorSwitch()}>{value}</h1>
+                <h1 className={"text-xl md:text-3xl lg:text-5xl font-semibold " + colorSwitch()}>{value}</h1>
                 <span>{footer}</span>
             </CardContent>
         </Card>

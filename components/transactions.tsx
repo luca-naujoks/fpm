@@ -8,6 +8,7 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {DataTable} from "@/components/DataTable";
 import {ColumnDef} from "@tanstack/react-table";
+import {Card, CardAction, CardContent, CardHeader} from "@/components/ui/card";
 
 export function TransactionComponent({project}: { project: project }) {
 
@@ -117,32 +118,26 @@ export function TransactionComponent({project}: { project: project }) {
     }
 
     return (
-        <div className="w-full bg-card border-sidebar-border border rounded-lg shadow p-4 text-primary">
-            <span className={"flex gap-2 justify-between items-center mb-4 pb-2 border-b-2 border-sidebar-border"}>
-                <div>
-                    <h2>{project.name}</h2>
+        <Card className={"h-full text-muted-foreground"}>
+            <CardHeader>
+                <h2>{project.name}</h2>
+                <div className={"flex gap-4 mb-4"}>
                     <p>Monthly Budget: {formattedBudget}</p>
-                    <p className={project.id === 0 ? "hidden" : ""}>Available Budget: <span
-                        className={availableBudget > 0 ? "text-chart-2" : "text-chart-3"}>€{formattedAvailable}</span></p>
+                    <p>Available Budget: {formattedAvailable}</p>
                 </div>
-                <span className={"flex gap-2"}>
-                    <AddExpense selectedProject={project.id} refetch={refetchTransactions}/>
-                    <AddIncome selectedProject={project.id} refetch={refetchTransactions}/>
-                </span>
-            </span>
-            <span className={project.id == 0 ? "hidden" : ""}>
+                <CardAction className={"flex gap-4"}>
+                    <AddExpense selectedProject={project} refetch={refetchTransactions}/>
+                    <AddIncome selectedProject={project} refetch={refetchTransactions}/>
+                </CardAction>
+            </CardHeader>
+            <CardContent>
                 <DataTable columns={columns} data={transactions} refresh={refetchTransactions}/>
-            </span>
-            <span
-                className={project.id == 0 ? "flex justify-center w-full h-full pt-8 text-foreground/50 text-center" : "hidden"}>
-                Feel free to create your first project by clicking the &#34;+ Add&#34; button on the left to start tracking Budgets.<br/>
-                Or Select one Your Already Existing Projects to check Budgets
-            </span>
-        </div>
+            </CardContent>
+        </Card>
     )
 }
 
-function AddIncome({selectedProject, refetch}: { selectedProject: number, refetch: () => Promise<void> }) {
+function AddIncome({selectedProject, refetch}: { selectedProject: project, refetch: () => Promise<void> }) {
     const [open, setOpen] = useState(false);
 
     async function handleAction(formData: FormData) {
@@ -177,7 +172,7 @@ function AddIncome({selectedProject, refetch}: { selectedProject: number, refetc
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className={"hover:bg-chart-2 "} variant={"secondary"} disabled={selectedProject == 0}>Add
+                <Button className={"hover:bg-chart-2 "} variant={"secondary"}>Add
                     Income</Button>
             </DialogTrigger>
             <DialogContent className="max-w-1/4">
@@ -193,7 +188,8 @@ function AddIncome({selectedProject, refetch}: { selectedProject: number, refetc
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="amount">Income</Label>
-                            <Input id="amount" name="amount" type="number" step={0.01} defaultValue={25.00}/>
+                            <Input id="amount" name="amount" type="number" step={0.01}
+                                   defaultValue={selectedProject.budget}/>
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="transactionDate">Date</Label>
@@ -214,7 +210,7 @@ function AddIncome({selectedProject, refetch}: { selectedProject: number, refetc
     );
 }
 
-function AddExpense({selectedProject, refetch}: { selectedProject: number, refetch: () => Promise<void> }) {
+function AddExpense({selectedProject, refetch}: { selectedProject: project, refetch: () => Promise<void> }) {
     const [open, setOpen] = useState(false);
 
     async function handleAction(formData: FormData) {
@@ -250,7 +246,7 @@ function AddExpense({selectedProject, refetch}: { selectedProject: number, refet
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className={"hover:bg-chart-1 "} variant={"secondary"} disabled={selectedProject == 0}>Add
+                <Button className={"hover:bg-chart-1 "} variant={"secondary"}>Add
                     Expense</Button>
             </DialogTrigger>
             <DialogContent className="max-w-1/4">
@@ -266,7 +262,8 @@ function AddExpense({selectedProject, refetch}: { selectedProject: number, refet
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="amount">Expense Amount</Label>
-                            <Input id="amount" name="amount" type="number" step={0.01} defaultValue={25.00}/>
+                            <Input id="amount" name="amount" type="number" step={0.01}
+                                   defaultValue={selectedProject.budget}/>
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="transactionDate">Date</Label>

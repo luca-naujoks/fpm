@@ -21,10 +21,7 @@ COPY . .
 # copy node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# create empty database file and run migrations
-RUN touch ./prisma/dev.db
 RUN npx prisma generate --schema=./prisma/schema.prisma
-RUN npx prisma migrate deploy --schema=./prisma/schema.prisma
 
 # build the next app
 RUN npm run build
@@ -52,4 +49,4 @@ EXPOSE 3000
 
 # command to run migrations on startup and then start the app
 ENV HOSTNAME="0.0.0.0"
-CMD npx prisma migrate deploy --schema=./prisma/schema.prisma && node server.js
+CMD ["/bin/sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node server.js"]

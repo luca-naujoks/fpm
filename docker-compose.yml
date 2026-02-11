@@ -1,0 +1,12 @@
+services:
+  fpm:
+    container_name: financial-project-management
+    image: fpm:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - prisma-data:/app/prisma
+    restart: unless-stopped
+
+volumes:
+  prisma-data:
