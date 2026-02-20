@@ -6,10 +6,10 @@ import {StatusCard} from "@/components/statusCard";
 import {getAllExpenses, getAllIncomes} from "@/app/actions";
 
 export function ProjectOverview({projects}: { projects: project[] }) {
+
     const [totalExpenses, setTotalExpenses] = useState<number>(0)
     const [totalRemaining, setTotalRemaining] = useState<number>(0)
     const [totalBudget, setTotalBudget] = useState<number>(0)
-
 
     useEffect(() => {
         async function calc() {
@@ -41,7 +41,6 @@ export function ProjectOverview({projects}: { projects: project[] }) {
         }
     }, [projects])
 
-
     if (projects.length <= 0) {
         return (
             <div className={"w-full justify-center"}>
@@ -68,16 +67,15 @@ export function ProjectOverview({projects}: { projects: project[] }) {
                             footer={`Across ${projects.length} projects`} color={"positive"}/>
                 <StatusCard title={"Active Projects"} value={projects.length} footer={``}/>
 
-                <Card className={"col-span-2 text-muted-foreground hidden"}>
+                <Card className={"hidden col-span-2 text-muted-foreground h-fit"}>
                     <CardHeader>
-                        <h2>By Month Expenses</h2>
-                        <span>Total finances across all projects</span>
+                        <h2>By Month Spending&#39;s</h2>
+                        <span>Total spending&#39;s across all projects</span>
                     </CardHeader>
                     <CardContent>
-
                     </CardContent>
                 </Card>
-                <Card className={"col-span-2 text-muted-foreground"}>
+                <Card className={"hidden col-span-2 text-muted-foreground"}>
                     <CardHeader>
                         <h2>Spending by Project</h2>
                         <span>Expenses by Project</span>

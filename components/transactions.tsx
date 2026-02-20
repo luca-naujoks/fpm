@@ -123,7 +123,8 @@ export function TransactionComponent({project}: { project: project }) {
                 <h2>{project.name}</h2>
                 <div className={"flex gap-4 mb-4"}>
                     <p>Monthly Budget: {formattedBudget}</p>
-                    <p>Available Budget: {formattedAvailable}</p>
+                    <p>Available Budget: <span
+                        className={availableBudget > 0 ? "text-chart-2 text-base" :  "text-chart-3 text-base"}>{formattedAvailable}</span></p>
                 </div>
                 <CardAction className={"flex gap-4"}>
                     <AddExpense selectedProject={project} refetch={refetchTransactions}/>
@@ -142,7 +143,7 @@ function AddIncome({selectedProject, refetch}: { selectedProject: project, refet
 
     async function handleAction(formData: FormData) {
         // Get projectId from search params
-        const projectId = selectedProject;
+        const projectId = selectedProject.id;
         // Get description from form
         const description = formData.get("description")?.toString() || "";
         // Set transactionType for income
@@ -215,7 +216,7 @@ function AddExpense({selectedProject, refetch}: { selectedProject: project, refe
 
     async function handleAction(formData: FormData) {
         // Get projectId from search params
-        const projectId = selectedProject;
+        const projectId = selectedProject.id;
         // Get description from form
         const description = formData.get("description")?.toString() || "";
         // Set transactionType for expense
@@ -234,6 +235,8 @@ function AddExpense({selectedProject, refetch}: { selectedProject: project, refe
         enhancedFormData.set("transactionType", transactionType);
         enhancedFormData.set("transactionAmount", transactionAmount.toString());
         enhancedFormData.set("transactionDate", transactionDate.toISOString());
+
+        console.log(enhancedFormData.get("projectId"))
 
         const result = await createTransaction(enhancedFormData);
 

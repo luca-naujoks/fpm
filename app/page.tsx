@@ -38,6 +38,9 @@ function ProjectsPage() {
     async function refetchProjects() {
         const projects: project[] = await getProjects()
         setProjects(projects)
+        if (selectedProject.id != 0) {
+            setSelectedProject(projects.filter((project: project) => project.id == selectedProject.id)[0])
+        }
     }
 
     const projectComponentProps: ProjectComponentProps = {
