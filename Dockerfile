@@ -11,6 +11,7 @@ RUN npm install
 
 
 FROM node:24-slim AS builder
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # set the working directory to /app
 WORKDIR /app
