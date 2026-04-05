@@ -2,7 +2,7 @@
 
 import {Button} from "@/components/ui/button";
 import React, {useState} from "react";
-import {createProject, deleteProject, editProject} from "@/app/actions"; // Assuming editProject exists
+import {createProject, cleanupProjects, deleteProject, editProject} from "@/app/actions"; // Assuming editProject exists
 import {
     Dialog,
     DialogContent,
@@ -33,45 +33,57 @@ export function ProjectComponent({props}: { props: ProjectComponentProps }) {
         props.setSelectedProject(project)
     }
 
-    return (
-        <Card className="w-64 mr-8 text-muted-foreground">
-            <CardHeader className={"flex justify-between w-full"}>
-                <h2 className={"text-start"}>Projects</h2>
-                <AddProjectButton refresh={() => props.refreshProjects()}/>
-            </CardHeader>
-            <CardContent className={"flex flex-col gap-2"}>
-                <Button variant={"secondary"} className={"w-full text-muted-foreground"}
-                        onClick={() => handleProjectSwitch({id: 0} as project)}
-                        disabled={props.selectedProject.id == 0}>Home</Button>
+    async function handleCleanupProjects() {
+        await cleanupProjects()
+        props.refreshProjects()
+    }
 
-                {props.projects.map((p) => (
-                    <ContextMenu key={p.id}>
-                        <ContextMenuTrigger>
-                            <Button variant={"secondary"} className={"w-full text-muted-foreground"}
-                                    onClick={() => handleProjectSwitch(p)}
-                                    disabled={props.selectedProject.id == p.id}>{p.name}
-                            </Button>
-                        </ContextMenuTrigger>
-                        <ContextMenuContent>
-                            <ContextMenuItem onSelect={() => setEditingProject(p)}>
-                                Edit
-                            </ContextMenuItem>
-                            <ContextMenuItem variant={"destructive"} onClick={() => {
-                                deleteProject(p.id).then(() => props.refreshProjects());
-                            }}>Delete</ContextMenuItem>
-                        </ContextMenuContent>
-                    </ContextMenu>
-                ))}
-            </CardContent>
-            {editingProject && (
-                <EditProject
-                    project={editingProject}
-                    open={!!editingProject}
-                    onOpenChange={(open) => !open && setEditingProject(null)}
-                    refresh={() => props.refreshProjects()}
-                />
-            )}
-        </Card>
+    return (
+        <ContextMenu>
+            <ContextMenuTrigger asChild>
+                <Card className="w-64 mr-8 text-muted-foreground">
+                    <CardHeader className={"flex justify-between w-full"}>
+                        <h2 className={"text-start"}>Projects</h2>
+                        <AddProjectButton refresh={() => props.refreshProjects()}/>
+                    </CardHeader>
+                    <CardContent className={"flex flex-col gap-2"}>
+                        <Button variant={"secondary"} className={"w-full text-muted-foreground"}
+                                onClick={() => handleProjectSwitch({id: 0} as project)}
+                                disabled={props.selectedProject.id == 0}>Home</Button>
+
+                        {props.projects.map((p) => (
+                            <ContextMenu key={p.id}>
+                                <ContextMenuTrigger>
+                                    <Button variant={"secondary"} className={"w-full text-muted-foreground"}
+                                            onClick={() => handleProjectSwitch(p)}
+                                            disabled={props.selectedProject.id == p.id}>{p.name}
+                                    </Button>
+                                </ContextMenuTrigger>
+                                <ContextMenuContent>
+                                    <ContextMenuItem onSelect={() => setEditingProject(p)}>
+                                        Edit
+                                    </ContextMenuItem>
+                                    <ContextMenuItem variant={"destructive"} onClick={() => {
+                                        deleteProject(p.id).then(() => props.refreshProjects());
+                                    }}>Delete</ContextMenuItem>
+                                </ContextMenuContent>
+                            </ContextMenu>
+                        ))}
+                    </CardContent>
+                    {editingProject && (
+                        <EditProject
+                            project={editingProject}
+                            open={!!editingProject}
+                            onOpenChange={(open) => !open && setEditingProject(null)}
+                            refresh={() => props.refreshProjects()}
+                        />
+                    )}
+                </Card>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem onSelect={handleCleanupProjects}>Cleanup projects</ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
     )
 }
 
