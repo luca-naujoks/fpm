@@ -75,10 +75,32 @@ export async function editProject(formData: FormData) {
 
 export async function deleteProject(projectId: number) {
     try {
-        await db.projects.delete({where: {id: projectId}})
+        await db.$transaction(async (tx) => {
+            // Remove all project transactions first, then remove the project.
+            await tx.transactions.deleteMany({where: {projectId: projectId}})
+            await tx.projects.delete({where: {id: projectId}})
+        })
+
+        revalidatePath("/")
         return {success: true}
     } catch (e) {
         return {error: e};
+    }
+}
+
+export async function cleanupProjects() {
+    try {
+        const projects = await db.projects.findMany({select: {id: true}})
+        const projectIds = projects.map((p) => p.id)
+
+        const cleaned = await db.transactions.deleteMany({
+            where: projectIds.length > 0 ? {projectId: {notIn: projectIds}} : {}
+        })
+
+        revalidatePath("/")
+        return {success: true, removedTransactions: cleaned.count}
+    } catch (e) {
+        return {error: e}
     }
 }
 
