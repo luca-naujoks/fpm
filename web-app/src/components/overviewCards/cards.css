@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.card {
+    @apply text-base bg-(--social-bg) border-(--border) border-2 rounded-sm p-4
+}

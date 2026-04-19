@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+h1 {
+    @apply text-2xl
+}
+
+table {
+    margin-top: 1rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid #404040;
+    border-radius: 8px;
+    overflow: hidden; /* clips cell backgrounds to the rounded corners */
+    width: 100%;
+}
+
+table td,
+table th {
+    border-bottom: 1px solid #404040;
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+tbody tr:hover {
+    @apply bg-neutral-700/50
+}
+
+.incomeButton {
+    @apply text-base bg-(--social-bg) border-(--border) border rounded-sm px-2 cursor-pointer hover:bg-green-700 hover:text-white transition-all duration-300
+}
+
+.expenseButton {
+    @apply text-base bg-(--social-bg) border-(--border) border rounded-sm px-2 cursor-pointer hover:bg-yellow-600  hover:text-white transition-all duration-300
+}

@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+input {
+    @apply w-full h-fit border-(--border) border-2 mb-2 px-1 py-0.5 rounded-sm text-sm outline-0
+}
+
+label {
+    @apply text-xs font-semibold
+}
+
+.modalHeading {
+    @apply text-lg font-semibold mb-4
+}
+
+.modalDescription {
+    @apply text-xs mb-2
+}
