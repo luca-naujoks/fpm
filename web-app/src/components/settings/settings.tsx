@@ -1,17 +1,16 @@
-import './settings.css'
 import {type JSX, type ReactNode, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ProjectSettings} from "./ProjectSettings.tsx";
 import {GeneralSettings} from "./GeneralSettings.tsx";
+import {useProject} from "../../context/useProjectContext.ts";
 
 interface settingsProps {
-    projects: IProject[]
     modalOpen: boolean
     closeModal: () => void
-    projectRefetch: () => void
 }
 
-export function Settings({projects, modalOpen, closeModal, projectRefetch}: settingsProps): JSX.Element {
+export function Settings({modalOpen, closeModal}: settingsProps): JSX.Element {
+    const {projects} = useProject()
     const [navigation, setNavigation] = useState<IProject | "general">("general")
 
     return (
@@ -28,7 +27,7 @@ export function Settings({projects, modalOpen, closeModal, projectRefetch}: sett
                                 disabled={navigation == "general"}>General
                         </button>
                         <p className={"mb-2 mt-1 border-b-2 border-neutral-700"}/>
-                        <div className={"flex flex-col grow"}>
+                        <div className={"flex flex-col grow gap-2"}>
                             {projects.map((project: IProject) => (
                                 <button key={project.id} className={"button"}
                                         onClick={() => setNavigation(project)}
@@ -38,8 +37,7 @@ export function Settings({projects, modalOpen, closeModal, projectRefetch}: sett
                     </div>
                     <p className={"h-full border-r-2 border-neutral-700"}/>
                     <div className={"w-full"}>
-                        <BodySwitch navigation={navigation} returnToGeneral={() => setNavigation("general")}
-                                    projectRefetch={projectRefetch}/>
+                        <BodySwitch navigation={navigation} returnToGeneral={() => setNavigation("general")}/>
                     </div>
                 </div>
             </div>
@@ -50,16 +48,15 @@ export function Settings({projects, modalOpen, closeModal, projectRefetch}: sett
 interface PBodyProps {
     navigation: IProject | "general"
     returnToGeneral: () => void
-    projectRefetch: () => void
 }
 
-function BodySwitch({navigation, returnToGeneral, projectRefetch}: PBodyProps): JSX.Element {
+function BodySwitch({navigation, returnToGeneral}: PBodyProps): JSX.Element {
     switch (navigation) {
         case "general":
             return <GeneralSettings/>
         default:
             return <ProjectSettings key={navigation.id || "general"} project={navigation}
-                                    returnToGeneral={returnToGeneral} projectRefetch={projectRefetch}/>
+                                    returnToGeneral={returnToGeneral}/>
     }
 }
 

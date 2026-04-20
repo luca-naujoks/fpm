@@ -1,4 +1,3 @@
-import './cards.css'
 import {type JSX, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 

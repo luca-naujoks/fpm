@@ -1,5 +1,0 @@
-@import "tailwindcss";
-
-.dangerButton {
-    @apply bg-red-900 hover:bg-red-950 text-base border-(--border) border rounded-sm px-2 cursor-pointer hover:scale-105 disabled:scale-100 disabled:bg-(--social-bg) disabled:cursor-default disabled:text-(--border)
-}

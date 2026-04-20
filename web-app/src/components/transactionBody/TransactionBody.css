@@ -8,7 +8,7 @@ table {
     margin-top: 1rem;
     border-collapse: separate;
     border-spacing: 0;
-    border: 2px solid #404040;
+    border: 2px solid var(--border);
     border-radius: 8px;
     overflow: hidden; /* clips cell backgrounds to the rounded corners */
     width: 100%;
@@ -16,7 +16,7 @@ table {
 
 table td,
 table th {
-    border-bottom: 1px solid #404040;
+    border-bottom: 1px solid var(--border);
     padding: 0.5rem;
     text-align: center;
     cursor: pointer;

@@ -28,15 +28,6 @@ func NewScheduler() {
 		}),
 	)
 
-	_, err = schedule.NewJob(
-		gocron.DurationJob(
-			10*time.Second,
-		),
-		gocron.NewTask(func() {
-			monthlyPayIn()
-		}),
-	)
-
 	schedule.Start()
 }
 

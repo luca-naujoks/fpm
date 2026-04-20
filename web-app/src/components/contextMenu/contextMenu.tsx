@@ -1,5 +1,3 @@
-import '../../App.css'
-import './contextMenu.css'
 import type {ITransaction} from "../../interfaces.ts";
 
 interface PContextMenuProps {

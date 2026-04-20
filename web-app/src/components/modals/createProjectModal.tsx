@@ -2,14 +2,16 @@ import './modals.css'
 import {type JSX, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
+import {useProject} from "../../context/useProjectContext.ts";
 
 interface createProjectProps {
     modalOpen: boolean
     closeMoal: () => void
-    projectRefetch: () => void
 }
 
-export function CreateProjectModal({modalOpen, closeMoal, projectRefetch}: createProjectProps): JSX.Element {
+export function CreateProjectModal({modalOpen, closeMoal}: createProjectProps): JSX.Element {
+    const { projectRefresh } = useProject()
+
     const [name, setName] = useState<string>("")
     const [description, setDescription] = useState<string>("")
     const [budget, setBudget] = useState<string>("20")
@@ -31,7 +33,7 @@ export function CreateProjectModal({modalOpen, closeMoal, projectRefetch}: creat
             return
         }
         closeMoal()
-        projectRefetch()
+        projectRefresh()
     }
 
     return (

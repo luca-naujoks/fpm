@@ -1,5 +1,0 @@
-@import "tailwindcss";
-
-.button {
-    @apply text-base bg-(--social-bg) hover:bg-(--social-bg)/90 border-(--border) border rounded-sm mb-2 px-2 cursor-pointer
-}

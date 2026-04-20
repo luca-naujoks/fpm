@@ -5,7 +5,7 @@ import {ModalWrapper} from "./wrapper.tsx";
 
 export interface createTransactionProps {
     modalOpen: boolean,
-    closeMoal: () => void,
+    closeModal: () => void,
     transactionRefetch: () => void,
     project: IProject,
 }
@@ -31,22 +31,27 @@ export function CreateExpenseModal({props}: { props: createTransactionProps }): 
             setError(data)
             return
         }
-        props.closeMoal()
+        props.closeModal()
         props.transactionRefetch()
     }
 
     return (
-        <ModalWrapper modalOpen={props.modalOpen} closeModal={props.closeMoal}>
+        <ModalWrapper modalOpen={props.modalOpen} closeModal={props.closeModal}>
             <p className={error == "" ? "hidden" : ""}>{error}</p>
-            <h1 className={"modalHeading"}>Add Expense</h1>
+            <div className={"w-full flex justify-between items-start"}>
+                <h1 className={"modalHeading"}>Add Expense</h1>
+                <button className={"cursor-pointer hover:text-white duration-150 scale-105"} onClick={() => props.closeModal()}>x
+                </button>
+            </div>
             <label htmlFor="">Description</label>
             <input type="text" placeholder={"Bluray"} onChange={(e) => setDescription(e.target.value)}/>
             <label htmlFor="">Amount</label>
-            <input type="number" max={0} value={amount} onChange={(e) => Number(e.target.value) <= 0 && setAmount(e.target.value)}/>
+            <input type="number" max={0} value={amount}
+                   onChange={(e) => Number(e.target.value) <= 0 && setAmount(e.target.value)}/>
             <label htmlFor="">Date</label>
             <input type="date" onChange={(e) => setAmount(e.target.value)}/>
             <div className={"flex gap-4 justify-end mt-8"}>
-                <button className={"button"} onClick={() => props.closeMoal()}>Cancel</button>
+                <button className={"button"} onClick={() => props.closeModal()}>Cancel</button>
                 <button className={"button"} onClick={() => submitTransaction()}>Add Expense</button>
             </div>
         </ModalWrapper>
@@ -74,22 +79,27 @@ export function CreateIncomeModal({props}: { props: createTransactionProps }): J
             setError(data)
             return
         }
-        props.closeMoal()
+        props.closeModal()
         props.transactionRefetch()
     }
 
     return (
-        <ModalWrapper modalOpen={props.modalOpen} closeModal={props.closeMoal}>
+        <ModalWrapper modalOpen={props.modalOpen} closeModal={props.closeModal}>
             <p className={error == "" ? "hidden" : ""}>{error}</p>
-            <h1 className={"modalHeading"}>Add Income</h1>
+            <div className={"w-full flex justify-between items-start"}>
+                <h1 className={"modalHeading"}>Add Income</h1>
+                <button className={"cursor-pointer hover:text-white duration-150 scale-105"} onClick={() => props.closeModal()}>x
+                </button>
+            </div>
             <label htmlFor="">Description</label>
             <input type="text" placeholder={"Special Funds"} onChange={(e) => setDescription(e.target.value)}/>
             <label htmlFor="">Amount</label>
-            <input type="number" min={0} value={amount} onChange={(e) => Number(e.target.value) >= 0 && setAmount(e.target.value)}/>
+            <input type="number" min={0} value={amount}
+                   onChange={(e) => Number(e.target.value) >= 0 && setAmount(e.target.value)}/>
             <label htmlFor="">Date</label>
             <input type="date" onChange={(e) => setAmount(e.target.value)}/>
             <div className={"flex gap-4 justify-end mt-8"}>
-                <button className={"button"} onClick={() => props.closeMoal()}>Cancel</button>
+                <button className={"button"} onClick={() => props.closeModal()}>Cancel</button>
                 <button className={"button"} onClick={() => submitIncome()}>Add Income</button>
             </div>
         </ModalWrapper>

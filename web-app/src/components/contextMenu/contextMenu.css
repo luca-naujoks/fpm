@@ -1,7 +1,0 @@
-@import "tailwindcss";
-.contextMenuButton {
-    @apply cursor-pointer hover:bg-(--code-bg) px-2 rounded-xs
-}
-.contextMenuButtonDanger {
-    @apply cursor-pointer px-2 text-red-700 hover:bg-red-400 rounded-xs
-}

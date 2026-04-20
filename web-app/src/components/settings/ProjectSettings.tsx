@@ -1,13 +1,14 @@
 import type {IProject} from "../../interfaces.ts";
 import {type JSX, useState} from "react";
+import {useProject} from "../../context/useProjectContext.ts";
 
 interface PProjectProps {
     project: IProject
     returnToGeneral: () => void,
-    projectRefetch: () => void
 }
 
-export function ProjectSettings({project, returnToGeneral, projectRefetch}: PProjectProps): JSX.Element {
+export function ProjectSettings({project, returnToGeneral}: PProjectProps): JSX.Element {
+    const { projectRefresh } = useProject()
     const [name, setName] = useState<string>(project.name)
     const [description, setDescription] = useState<string>(project.description)
     const [budget, setBudget] = useState<string>(project.budget.toString())
@@ -49,7 +50,7 @@ export function ProjectSettings({project, returnToGeneral, projectRefetch}: PPro
             return
         }
         returnToGeneral()
-        projectRefetch()
+        projectRefresh()
     }
 
 
@@ -72,7 +73,7 @@ export function ProjectSettings({project, returnToGeneral, projectRefetch}: PPro
                        onChange={(e) => setBudget(e.target.value)}/>
             </div>
             <div className={"flex gap-4 justify-end mt-8"}>
-                <button className={"dangerButton"} onClick={() => deleteProject()}>{deleteButtonText}</button>
+                <button className={"button dangerButton"} onClick={() => deleteProject()}>{deleteButtonText}</button>
                 <button className={"button"} onClick={() => updateProject()} disabled={disableUpdateButton}>Update
                     Project
                 </button>

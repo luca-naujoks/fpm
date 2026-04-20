@@ -2,6 +2,7 @@ package main
 
 import (
 	"financial-planner/internal/database"
+	"financial-planner/internal/jobs"
 	"financial-planner/internal/webContent"
 	"fmt"
 	"os"
@@ -16,7 +17,7 @@ func main() {
 		return
 	}
 
-	//go jobs.NewScheduler()
+	go jobs.NewScheduler()
 
 	router := gin.Default()
 

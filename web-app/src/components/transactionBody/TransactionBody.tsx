@@ -1,18 +1,16 @@
 import './TransactionBody.css';
 import {type JSX, useCallback, useEffect, useState} from "react";
-import type {IProject, ITransaction} from "../../interfaces.ts";
+import type {ITransaction} from "../../interfaces.ts";
 import {CreateExpenseModal, CreateIncomeModal, type createTransactionProps} from "../modals/createTransaction.tsx";
 import {TotalBudget} from "../overviewCards/totalBudget.tsx";
 import {ActiveProjects} from "../overviewCards/activeProjects.tsx";
 import {AvailableBudget} from "../overviewCards/availableBudget.tsx";
 import {SpendBudget} from "../overviewCards/spendBudget.tsx";
 import {ContextMenu} from "../contextMenu/contextMenu.tsx";
+import {useProject} from "../../context/useProjectContext.ts";
 
-export interface TransactionBodyProps {
-    project: IProject | undefined
-}
-
-export function TransactionBody({project}: TransactionBodyProps): JSX.Element {
+export function TransactionBody(): JSX.Element {
+    const {selectedProject} = useProject()
     const [expenseModalOpen, setExpenseModalOpen] = useState<boolean>(false)
     const [incomeModalOpen, setIncomeModalOpen] = useState<boolean>(false)
 
@@ -21,29 +19,39 @@ export function TransactionBody({project}: TransactionBodyProps): JSX.Element {
 
 
     const fetchTransactions = useCallback(async (): Promise<ITransaction[]> => {
-        const response = await fetch(`/api/transactions?projectId=${project?.id}`, {method: "GET"})
+        if (!selectedProject) {
+            return []
+        }
+        const response = await fetch(`/api/transactions?projectId=${selectedProject?.id}`, {method: "GET"})
         return await response.json()
-    }, [project])
+    }, [selectedProject])
 
     const fetchProjectBudget = useCallback(async (): Promise<number> => {
-        const response = await fetch(`/api/project/budget?projectId=${project?.id}`, {method: "GET"})
+        if (!selectedProject) {
+            return 0
+        }
+        const response = await fetch(`/api/project/budget?projectId=${selectedProject?.id}`, {method: "GET"})
         return await response.json()
-    }, [project])
+    }, [selectedProject])
 
     useEffect(() => {
-        if (!project) {
+        if (!selectedProject) {
             return
         }
         fetchTransactions().then((transactions: ITransaction[]) => setTransactions(transactions))
         fetchProjectBudget().then((budget: number) => setBudget(budget))
 
-    }, [fetchProjectBudget, fetchTransactions, project]);
+    }, [fetchProjectBudget, fetchTransactions, selectedProject]);
+
+    useEffect(() => {
+        fetchProjectBudget().then((budget: number) => setBudget(budget))
+    }, [fetchProjectBudget, transactions]);
 
     function refreshTransactions(): void {
         fetchTransactions().then((transactions: ITransaction[]) => setTransactions(transactions))
     }
 
-    if (!project) {
+    if (!selectedProject) {
         return (
             <div>
                 <h1 className={"mb-4"}>Home Overview</h1>
@@ -59,15 +67,15 @@ export function TransactionBody({project}: TransactionBodyProps): JSX.Element {
 
     const expenseProps: createTransactionProps = {
         modalOpen: expenseModalOpen,
-        closeMoal: () => setExpenseModalOpen(false),
+        closeModal: () => setExpenseModalOpen(false),
         transactionRefetch: refreshTransactions,
-        project: project
+        project: selectedProject
     }
     const incomeProps: createTransactionProps = {
         modalOpen: incomeModalOpen,
-        closeMoal: () => setIncomeModalOpen(false),
+        closeModal: () => setIncomeModalOpen(false),
         transactionRefetch: refreshTransactions,
-        project: project
+        project: selectedProject
     }
 
     function colorSwitch(): string {
@@ -89,10 +97,10 @@ export function TransactionBody({project}: TransactionBodyProps): JSX.Element {
             <CreateIncomeModal props={incomeProps}/>
             <div className={"flex justify-between"}>
                 <div>
-                    <h1>{project.name}</h1>
-                    <p className={"max-h-16 w-96 text-ellipsis overflow-hidden"}>{project.description}</p>
+                    <h1>{selectedProject.name}</h1>
+                    <p className={"max-h-16 w-96 text-ellipsis overflow-hidden"}>{selectedProject.description}</p>
                     <div className={"text-xs mt-4"}>
-                        <span className={"mr-4"}>Monthly Budget: {project.budget}€ </span>
+                        <span className={"mr-4"}>Monthly Budget: {selectedProject.budget}€ </span>
                         <span>Available Budget: <span
                             className={colorSwitch()}>{budget}€</span></span>
                     </div>
@@ -116,8 +124,8 @@ export function TransactionBody({project}: TransactionBodyProps): JSX.Element {
                 </thead>
                 <tbody>
                 {transactions.map((transaction: ITransaction) =>
-
-                    <TransactionRow key={transaction.id} transaction={transaction} refreshTransactions={refreshTransactions}/>
+                    <TransactionRow key={transaction.id} transaction={transaction}
+                                    refreshTransactions={refreshTransactions}/>
                 )}
                 </tbody>
             </table>
@@ -125,7 +133,10 @@ export function TransactionBody({project}: TransactionBodyProps): JSX.Element {
     )
 }
 
-function TransactionRow({transaction, refreshTransactions}: { transaction: ITransaction, refreshTransactions: () => void }): JSX.Element {
+function TransactionRow({transaction, refreshTransactions}: {
+    transaction: ITransaction,
+    refreshTransactions: () => void
+}): JSX.Element {
     const transactionDate = new Date(transaction.date)
     const [contextMenuOpen, setContextMenuOpen] = useState<boolean>(false)
     const [position, setPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
@@ -133,7 +144,8 @@ function TransactionRow({transaction, refreshTransactions}: { transaction: ITran
     return (
         <>
             <ContextMenu key={position.x + position.y} position={position} open={contextMenuOpen}
-                         transaction={transaction} close={() => setContextMenuOpen(false)} refreshTransactions={refreshTransactions}/>
+                         transaction={transaction} close={() => setContextMenuOpen(false)}
+                         refreshTransactions={refreshTransactions}/>
             <tr onContextMenu={(e) => {
                 e.preventDefault();
                 setPosition({x: e.pageX, y: e.pageY});

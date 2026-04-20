@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
 .button {
-  @apply text-base bg-(--social-bg) hover:bg-(--social-bg)/90 border-(--border) border rounded-sm px-2 cursor-pointer hover:scale-105 disabled:scale-100 disabled:bg-(--social-bg) disabled:cursor-default disabled:text-(--border)
+  @apply text-base bg-(--social-bg) hover:bg-(--social-bg)/90 border-(--border) border rounded-sm px-2 cursor-pointer hover:scale-105 disabled:scale-100 disabled:bg-(--social-bg) disabled:cursor-default disabled:text-(--border) duration-300
+}
+.dangerButton {
+  @apply bg-red-900 hover:bg-red-950
+}
+
+.card {
+  @apply text-base bg-(--social-bg) border-(--border) border-2 rounded-sm p-4
+}
+
+.contextMenuButton {
+  @apply cursor-pointer hover:bg-(--code-bg) px-2 rounded-xs
+}
+.contextMenuButtonDanger {
+  @apply cursor-pointer px-2 text-red-700 hover:bg-red-400 rounded-xs
 }
