@@ -4,6 +4,7 @@ import (
 	"financial-planner/internal/database"
 	"financial-planner/internal/models"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -151,4 +152,46 @@ func DeleteTransactions(c *gin.Context) {
 	deletedTransactions, err := database.DeleteTransactions(projectId)
 	c.IndentedJSON(200, gin.H{"deletedTransactions": deletedTransactions})
 	return
+}
+
+func ImportTransactions(c *gin.Context) {
+	type ImportBody struct {
+		ProjectId    int                  `json:"project_id"`
+		Transactions []models.Transaction `json:"transactions"`
+	}
+
+	var importBody ImportBody
+	err := c.BindJSON(&importBody)
+	if err != nil {
+		c.IndentedJSON(500, gin.H{"error": "failed to parse JSON to Transaction Data Type"})
+		return
+	}
+	for _, transaction := range importBody.Transactions {
+		transaction.ProjectId = importBody.ProjectId
+		_, err := database.CreateTransactions(transaction)
+		if err != nil {
+			c.IndentedJSON(500, err.Error())
+			return
+		}
+	}
+}
+
+func ExportTransactions(c *gin.Context) {
+	projectId, err := strconv.Atoi(c.Query("project_id"))
+	if err != nil {
+		c.IndentedJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	transactions, err := database.GetProjectTransactions(projectId)
+	if err != nil {
+		c.IndentedJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Set headers for file download
+	c.Header("Content-Disposition", "attachment; filename=transactions.json")
+	c.Header("Content-Type", "application/json")
+
+	// Send transactions as JSON
+	c.JSON(http.StatusOK, transactions)
 }

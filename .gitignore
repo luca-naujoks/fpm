@@ -11,3 +11,6 @@ web-app/dist/
 
 # Dependencies
 web-app/node_modules/
+
+# compiled Go Binary
+financial-planner

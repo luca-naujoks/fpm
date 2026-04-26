@@ -1,14 +1,16 @@
 import './App.css'
 import {Sidebar} from "./components/sidebar/sidebar.tsx";
 import {TransactionBody} from "./components/transactionBody/TransactionBody.tsx";
-import {ProjectProvider} from "./context/ProjectContext.tsx";
+import {useTransactionContext} from "./context/transactionModal/useTransactionModal.ts";
+import {TransactionModal} from "./components/modals/transactionModal.tsx";
 
 function App() {
-
+    const {} = useTransactionContext()
 
     return (
-        <ProjectProvider>
-            <div className={"grid grid-cols-9"}>
+        <>
+            <TransactionModal/>
+            <div className={"max-h-screen max-w-screen overflow-hidden grid grid-cols-9"}>
                 <section className={"col-span-1"}>
                     <Sidebar/>
                 </section>
@@ -16,7 +18,7 @@ function App() {
                     <TransactionBody/>
                 </section>
             </div>
-        </ProjectProvider>
+        </>
     )
 }
 

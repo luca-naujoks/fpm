@@ -56,6 +56,12 @@ func main() {
 		api.DELETE("/transaction", func(c *gin.Context) {
 			webContent.DeleteTransactions(c)
 		})
+		api.PUT("/transaction/import", func(c *gin.Context) {
+			webContent.ImportTransactions(c)
+		})
+		api.GET("/transaction/export", func(c *gin.Context) {
+			webContent.ExportTransactions(c)
+		})
 
 	}
 

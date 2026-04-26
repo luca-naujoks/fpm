@@ -16,7 +16,7 @@ export function SpendBudget(): JSX.Element {
     return (
         <div className={"card"}>
             <h2>Total Spend Budget</h2>
-            <h1>{spendBudget}€</h1>
+            <h1>{spendBudget.toFixed(2)}€</h1>
         </div>
     )
 }

@@ -34,7 +34,7 @@ COPY --from=frontend /app/dist /app/web-app/dist
 COPY *.go .
 COPY internal ./internal
 
-RUN CGO_ENABLED=0 go build -tags musl -ldflags="-s -w" -o main .
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o main .
 
 # stage 3: build minimal run image
 FROM scratch

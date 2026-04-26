@@ -24,7 +24,7 @@ export function TotalBudget(): JSX.Element {
     return (
         <div className={"card"}>
             <h2>Total Budget (Monthly)</h2>
-            <h1>{monthlyBudget}€</h1>
+            <h1>{monthlyBudget.toFixed(2)}€</h1>
         </div>
     )
 }

@@ -26,13 +26,5 @@ table tr:last-child td {
     border-bottom: none;
 }
 tbody tr:hover {
-    @apply bg-neutral-700/50
-}
-
-.incomeButton {
-    @apply text-base bg-(--social-bg) border-(--border) border rounded-sm px-2 cursor-pointer hover:bg-green-700 hover:text-white transition-all duration-300
-}
-
-.expenseButton {
-    @apply text-base bg-(--social-bg) border-(--border) border rounded-sm px-2 cursor-pointer hover:bg-yellow-600  hover:text-white transition-all duration-300
+    @apply bg-(--social-bg)
 }

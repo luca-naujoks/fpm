@@ -6,11 +6,11 @@ import {useProject} from "../../context/useProjectContext.ts";
 
 interface createProjectProps {
     modalOpen: boolean
-    closeMoal: () => void
+    closeModal: () => void
 }
 
-export function CreateProjectModal({modalOpen, closeMoal}: createProjectProps): JSX.Element {
-    const { projectRefresh } = useProject()
+export function CreateProjectModal({modalOpen, closeModal}: createProjectProps): JSX.Element {
+    const {projectRefresh} = useProject()
 
     const [name, setName] = useState<string>("")
     const [description, setDescription] = useState<string>("")
@@ -32,14 +32,18 @@ export function CreateProjectModal({modalOpen, closeMoal}: createProjectProps): 
             setError(data)
             return
         }
-        closeMoal()
+        closeModal()
         projectRefresh()
     }
 
     return (
-        <ModalWrapper modalOpen={modalOpen} closeModal={closeMoal}>
+        <ModalWrapper modalOpen={modalOpen} closeModal={closeModal}>
             <p className={error == "" ? "hidden" : ""}>{error}</p>
-            <h1 className={"modalHeading"}>Create Project</h1>
+            <div className={"w-full flex justify-between items-start"}>
+                <h1 className={"modalHeading"}>Create Project</h1>
+                <button className={"ghost-button"} onClick={() => closeModal()}>x
+                </button>
+            </div>
             <p className={"modalDescription"}>Create your Side Project. Click Save to create it.</p>
             <label htmlFor="">Project Name</label>
             <input type="text" placeholder={"Home Lab"} onChange={(e) => setName(e.target.value)}/>
@@ -48,7 +52,7 @@ export function CreateProjectModal({modalOpen, closeMoal}: createProjectProps): 
             <label htmlFor="">Project Budget</label>
             <input type="number" placeholder={"20"} defaultValue={20} onChange={(e) => setBudget(e.target.value)}/>
             <div className={"flex gap-4 justify-end mt-8"}>
-                <button className={"button"} onClick={() => closeMoal()}>Cancel</button>
+                <button className={"button"} onClick={() => closeModal()}>Cancel</button>
                 <button className={"button"} onClick={() => submitProject()}>Create Project</button>
             </div>
         </ModalWrapper>

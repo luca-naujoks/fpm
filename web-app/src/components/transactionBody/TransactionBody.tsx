@@ -1,29 +1,26 @@
 import './TransactionBody.css';
 import {type JSX, useCallback, useEffect, useState} from "react";
 import type {ITransaction} from "../../interfaces.ts";
-import {CreateExpenseModal, CreateIncomeModal, type createTransactionProps} from "../modals/createTransaction.tsx";
 import {TotalBudget} from "../overviewCards/totalBudget.tsx";
 import {ActiveProjects} from "../overviewCards/activeProjects.tsx";
 import {AvailableBudget} from "../overviewCards/availableBudget.tsx";
 import {SpendBudget} from "../overviewCards/spendBudget.tsx";
 import {ContextMenu} from "../contextMenu/contextMenu.tsx";
 import {useProject} from "../../context/useProjectContext.ts";
+import {useTransactionContext} from "../../context/transactionModal/useTransactionModal.ts";
 
 export function TransactionBody(): JSX.Element {
     const {selectedProject} = useProject()
-    const [expenseModalOpen, setExpenseModalOpen] = useState<boolean>(false)
-    const [incomeModalOpen, setIncomeModalOpen] = useState<boolean>(false)
+    const {openTransactionModal, transactions, fetchTransactions} = useTransactionContext()
 
-    const [transactions, setTransactions] = useState<ITransaction[]>([])
     const [budget, setBudget] = useState<number>(0)
 
-
-    const fetchTransactions = useCallback(async (): Promise<ITransaction[]> => {
+    const fetchTransactionsCallback = useCallback(async () => {
         if (!selectedProject) {
-            return []
+            return
         }
-        const response = await fetch(`/api/transactions?projectId=${selectedProject?.id}`, {method: "GET"})
-        return await response.json()
+
+        fetchTransactions(selectedProject.id)
     }, [selectedProject])
 
     const fetchProjectBudget = useCallback(async (): Promise<number> => {
@@ -35,21 +32,14 @@ export function TransactionBody(): JSX.Element {
     }, [selectedProject])
 
     useEffect(() => {
-        if (!selectedProject) {
-            return
-        }
-        fetchTransactions().then((transactions: ITransaction[]) => setTransactions(transactions))
         fetchProjectBudget().then((budget: number) => setBudget(budget))
-
-    }, [fetchProjectBudget, fetchTransactions, selectedProject]);
+        fetchTransactionsCallback().then(() => {
+        })
+    }, [fetchProjectBudget, fetchTransactionsCallback, selectedProject]);
 
     useEffect(() => {
         fetchProjectBudget().then((budget: number) => setBudget(budget))
     }, [fetchProjectBudget, transactions]);
-
-    function refreshTransactions(): void {
-        fetchTransactions().then((transactions: ITransaction[]) => setTransactions(transactions))
-    }
 
     if (!selectedProject) {
         return (
@@ -65,19 +55,6 @@ export function TransactionBody(): JSX.Element {
         )
     }
 
-    const expenseProps: createTransactionProps = {
-        modalOpen: expenseModalOpen,
-        closeModal: () => setExpenseModalOpen(false),
-        transactionRefetch: refreshTransactions,
-        project: selectedProject
-    }
-    const incomeProps: createTransactionProps = {
-        modalOpen: incomeModalOpen,
-        closeModal: () => setIncomeModalOpen(false),
-        transactionRefetch: refreshTransactions,
-        project: selectedProject
-    }
-
     function colorSwitch(): string {
         switch (true) {
             case budget == 0:
@@ -90,11 +67,16 @@ export function TransactionBody(): JSX.Element {
         return ""
     }
 
+    const transactionModalProps: ITransaction = {
+        id: 0,
+        project_id: selectedProject.id,
+        description: "",
+        amount: 0,
+        date: new Date()
+    }
 
     return (
-        <div>
-            <CreateExpenseModal props={expenseProps}/>
-            <CreateIncomeModal props={incomeProps}/>
+        <div className={"max-h-screen overflow-scroll pb-8"}>
             <div className={"flex justify-between"}>
                 <div>
                     <h1>{selectedProject.name}</h1>
@@ -105,11 +87,9 @@ export function TransactionBody(): JSX.Element {
                             className={colorSwitch()}>{budget}€</span></span>
                     </div>
                 </div>
-                <div className={"flex gap-4 items-end"}>
-                    <button className={"expenseButton"} onClick={() => setExpenseModalOpen(true)}>Add
-                        Expense
-                    </button>
-                    <button className={"incomeButton"} onClick={() => setIncomeModalOpen(true)}>Add Income
+                <div className={"flex items-end"}>
+                    <button className={"button"} onClick={() => openTransactionModal(transactionModalProps)}>
+                        Add Transaction
                     </button>
                 </div>
             </div>
@@ -125,7 +105,7 @@ export function TransactionBody(): JSX.Element {
                 <tbody>
                 {transactions.map((transaction: ITransaction) =>
                     <TransactionRow key={transaction.id} transaction={transaction}
-                                    refreshTransactions={refreshTransactions}/>
+                    />
                 )}
                 </tbody>
             </table>
@@ -133,10 +113,7 @@ export function TransactionBody(): JSX.Element {
     )
 }
 
-function TransactionRow({transaction, refreshTransactions}: {
-    transaction: ITransaction,
-    refreshTransactions: () => void
-}): JSX.Element {
+function TransactionRow({transaction}: { transaction: ITransaction }): JSX.Element {
     const transactionDate = new Date(transaction.date)
     const [contextMenuOpen, setContextMenuOpen] = useState<boolean>(false)
     const [position, setPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
@@ -145,7 +122,7 @@ function TransactionRow({transaction, refreshTransactions}: {
         <>
             <ContextMenu key={position.x + position.y} position={position} open={contextMenuOpen}
                          transaction={transaction} close={() => setContextMenuOpen(false)}
-                         refreshTransactions={refreshTransactions}/>
+            />
             <tr onContextMenu={(e) => {
                 e.preventDefault();
                 setPosition({x: e.pageX, y: e.pageY});
