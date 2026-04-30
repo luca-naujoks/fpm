@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .button {
-    @apply text-base bg-(--social-bg) hover:bg-(--social-bg)/90 border-(--border) border rounded-sm px-2 cursor-pointer hover:scale-105 disabled:scale-100 disabled:bg-(--social-bg) disabled:cursor-default disabled:text-(--border) duration-300
+    @apply text-sm xl:text-base h-fit bg-(--social-bg) hover:bg-(--social-bg)/90 border-(--border) border rounded-sm px-2 cursor-pointer hover:scale-105 disabled:scale-100 disabled:bg-(--social-bg) disabled:cursor-default disabled:text-(--border) duration-300
 }
 
 .ghost-button {

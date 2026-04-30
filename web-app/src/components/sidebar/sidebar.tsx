@@ -1,28 +1,28 @@
 import {type JSX, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
-import {CreateProjectModal} from "../modals/createProjectModal.tsx";
 import {Settings} from "../settings/settings.tsx";
-import {useProject} from "../../context/useProjectContext.ts";
+import {useProject} from "../../context/projectContext/useProjectContext.ts";
+import {useSidebar} from "../../context/sidebarContext/useSidebarContext.ts";
 
 export function Sidebar(): JSX.Element {
-    const {projects, selectedProject, setSelectedProject} = useProject()
+    const {projects, selectedProject, setSelectedProject, toggleCreateModal} = useProject()
+    const {sidebarOpen} = useSidebar()
 
-    const [createProjectModalOpen, setCreateProjectModalOpen] = useState<boolean>(false)
     const [settingsModalOpen, setSettingsModalOpen] = useState<boolean>(false)
 
     return (
         <>
-            <CreateProjectModal modalOpen={createProjectModalOpen} closeModal={() => setCreateProjectModalOpen(false)}/>
             <Settings modalOpen={settingsModalOpen} closeModal={() => setSettingsModalOpen(false)}/>
-            <div className={"flex flex-col h-screen w-fit p-4 border-r-2 border-(--border)"}>
+            <div className={`flex-col h-screen w-fit p-4 border-r-2 border-(--border) ${sidebarOpen ? "flex" : "hidden"}`}>
                 <div className={"flex justify-between items-end gap-4 mb-4"}>
-                    <h1>Projects</h1>
-                    <button className={"button"} onClick={() => setCreateProjectModalOpen(true)}>+ Add
+                    <h1 className={"hidden lg:block"}>Projects</h1>
+                    <h1 className={"block lg:hidden"}>FPM</h1>
+                    <button className={"button"} onClick={() => toggleCreateModal()}>+ Add
                     </button>
                 </div>
                 <div className={"flex flex-col h-full w-full gap-2"}>
                     <button className={"button"} onClick={() => setSelectedProject(undefined)}
-                            disabled={selectedProject == undefined}>Home Overview
+                            disabled={selectedProject == undefined}>Overview
                     </button>
                     <p className={"border-b-2 border-(--border)"}/>
                     <div className={"flex flex-col grow gap-2"}>

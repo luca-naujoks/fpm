@@ -1,13 +1,15 @@
 import type {IProject, ITransaction} from "../../interfaces.ts";
 import {type ChangeEvent, type JSX, useCallback, useEffect, useState} from "react";
-import {useProject} from "../../context/useProjectContext.ts";
+import {useProject} from "../../context/projectContext/useProjectContext.ts";
 
 interface PProjectProps {
     project: IProject
     returnToGeneral: () => void,
+    setError: (message: string) => void
+    setPositiveFeedback: (message: string) => void
 }
 
-export function ProjectSettings({project, returnToGeneral}: PProjectProps): JSX.Element {
+export function ProjectSettings({project, returnToGeneral, setError, setPositiveFeedback} : PProjectProps): JSX.Element {
     const {projectRefresh} = useProject()
     const [name, setName] = useState<string>(project.name)
     const [description, setDescription] = useState<string>(project.description)
@@ -17,8 +19,7 @@ export function ProjectSettings({project, returnToGeneral}: PProjectProps): JSX.
     const [importFile, setImportFile] = useState<File>()
     const [transactions, setTransactions] = useState<ITransaction[]>([])
 
-    const [error, setError] = useState<string>("")
-    const [positiveFeedback, setPositiveFeedback] = useState<string>("")
+
 
     const [deleteButtonText, setDeleteButtonText] = useState<string>("Delete Project")
 
@@ -114,7 +115,6 @@ export function ProjectSettings({project, returnToGeneral}: PProjectProps): JSX.
             setPositiveFeedback("Transactions exported successfully")
         } catch {
             setError("Error exporting transactions")
-            console.error(error)
         }
     }
 
@@ -130,10 +130,7 @@ export function ProjectSettings({project, returnToGeneral}: PProjectProps): JSX.
 
     return (
         <div>
-            <p className={error == "" ? "hidden" : ""}>{error}</p>
-            <p className={positiveFeedback == "" ? "hidden" : "w-fit p-2 bg-green-800 rounded-md cursor-pointer"}
-               onClick={() => setPositiveFeedback("")}>{positiveFeedback}</p>
-            <h2>Editing Project {project.id}</h2>
+            <h2>Edit Project</h2>
             <div>
                 <label htmlFor="">Project Id</label>
                 <input type="text" placeholder={"0"} value={project.id} className={"input"} disabled/>

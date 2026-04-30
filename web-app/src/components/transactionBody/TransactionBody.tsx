@@ -6,8 +6,9 @@ import {ActiveProjects} from "../overviewCards/activeProjects.tsx";
 import {AvailableBudget} from "../overviewCards/availableBudget.tsx";
 import {SpendBudget} from "../overviewCards/spendBudget.tsx";
 import {ContextMenu} from "../contextMenu/contextMenu.tsx";
-import {useProject} from "../../context/useProjectContext.ts";
-import {useTransactionContext} from "../../context/transactionModal/useTransactionModal.ts";
+import {useProject} from "../../context/projectContext/useProjectContext.ts";
+import {useTransactionContext} from "../../context/transactionContext/useTransactionModal.ts";
+import {BurgerMenuButton} from "../BurgerMenuButton.tsx";
 
 export function TransactionBody(): JSX.Element {
     const {selectedProject} = useProject()
@@ -43,9 +44,12 @@ export function TransactionBody(): JSX.Element {
 
     if (!selectedProject) {
         return (
-            <div>
-                <h1 className={"mb-4"}>Home Overview</h1>
-                <div className={"w-full h-36 grid grid-cols-4 gap-4"}>
+            <div className={"w-full"}>
+                <div className={"flex gap-2 mb-4 items-center"}>
+                    <BurgerMenuButton/>
+                    <h1 className={""}>Home Overview</h1>
+                </div>
+                <div className={"w-full h-36 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"}>
                     <TotalBudget/>
                     <SpendBudget/>
                     <AvailableBudget/>
@@ -77,21 +81,25 @@ export function TransactionBody(): JSX.Element {
 
     return (
         <div className={"max-h-screen overflow-scroll pb-8"}>
-            <div className={"flex justify-between"}>
-                <div>
-                    <h1>{selectedProject.name}</h1>
-                    <p className={"max-h-16 w-96 text-ellipsis overflow-hidden"}>{selectedProject.description}</p>
-                    <div className={"text-xs mt-4"}>
+            <div id={"TransactionHead"} className={"flex justify-between items-end"}>
+                <div className={"flex flex-col"}>
+                    <div className={"flex"}>
+                        <BurgerMenuButton/>
+                        <span>
+                        <h1>{selectedProject.name}</h1>
+                        <span
+                            className={"max-h-16 max-w-96 text-ellipsis overflow-hidden"}>{selectedProject.description}</span>
+                        </span>
+                    </div>
+                    <p className={"flex flex-col lg:flex"}>
                         <span className={"mr-4"}>Monthly Budget: {selectedProject.budget}€ </span>
                         <span>Available Budget: <span
                             className={colorSwitch()}>{budget}€</span></span>
-                    </div>
+                    </p>
                 </div>
-                <div className={"flex items-end"}>
-                    <button className={"button"} onClick={() => openTransactionModal(transactionModalProps)}>
-                        Add Transaction
-                    </button>
-                </div>
+                <button className={"button"} onClick={() => openTransactionModal(transactionModalProps)}>
+                    Add Transaction
+                </button>
             </div>
             <table>
                 <thead>

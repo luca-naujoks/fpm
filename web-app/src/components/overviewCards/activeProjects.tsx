@@ -1,5 +1,5 @@
 import {type JSX} from "react";
-import {useProject} from "../../context/useProjectContext.ts";
+import {useProject} from "../../context/projectContext/useProjectContext.ts";
 
 export function ActiveProjects(): JSX.Element {
     const {projects} = useProject()

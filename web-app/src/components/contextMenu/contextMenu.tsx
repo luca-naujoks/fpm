@@ -1,5 +1,5 @@
 import type {ITransaction} from "../../interfaces.ts";
-import {useTransactionContext} from "../../context/transactionModal/useTransactionModal.ts";
+import {useTransactionContext} from "../../context/transactionContext/useTransactionModal.ts";
 
 interface PContextMenuProps {
     position: { x: number, y: number }

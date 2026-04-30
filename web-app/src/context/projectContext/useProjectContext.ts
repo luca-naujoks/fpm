@@ -1,11 +1,14 @@
 import {createContext, useContext} from "react";
-import type {IProject} from "../interfaces.ts";
+import type {IProject} from "../../interfaces.ts";
 
 interface IProjectContext {
     projects: IProject[]
     selectedProject: IProject | undefined
     projectRefresh: () => void
     setSelectedProject: (project: IProject | undefined) => void
+
+    createModalOpen: boolean
+    toggleCreateModal: () => void
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

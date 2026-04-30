@@ -2,7 +2,7 @@ import './modals.css'
 import {type JSX, useEffect, useState} from "react";
 import type {ITransaction} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
-import {useTransactionContext} from "../../context/transactionModal/useTransactionModal.ts";
+import {useTransactionContext} from "../../context/transactionContext/useTransactionModal.ts";
 
 export function TransactionModal(): JSX.Element {
     const {

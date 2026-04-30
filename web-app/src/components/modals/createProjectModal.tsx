@@ -2,15 +2,10 @@ import './modals.css'
 import {type JSX, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
-import {useProject} from "../../context/useProjectContext.ts";
+import {useProject} from "../../context/projectContext/useProjectContext.ts";
 
-interface createProjectProps {
-    modalOpen: boolean
-    closeModal: () => void
-}
-
-export function CreateProjectModal({modalOpen, closeModal}: createProjectProps): JSX.Element {
-    const {projectRefresh} = useProject()
+export function CreateProjectModal(): JSX.Element {
+    const {projectRefresh, createModalOpen, toggleCreateModal} = useProject()
 
     const [name, setName] = useState<string>("")
     const [description, setDescription] = useState<string>("")
@@ -32,16 +27,16 @@ export function CreateProjectModal({modalOpen, closeModal}: createProjectProps):
             setError(data)
             return
         }
-        closeModal()
+        toggleCreateModal()
         projectRefresh()
     }
 
     return (
-        <ModalWrapper modalOpen={modalOpen} closeModal={closeModal}>
+        <ModalWrapper modalOpen={createModalOpen} closeModal={toggleCreateModal}>
             <p className={error == "" ? "hidden" : ""}>{error}</p>
             <div className={"w-full flex justify-between items-start"}>
                 <h1 className={"modalHeading"}>Create Project</h1>
-                <button className={"ghost-button"} onClick={() => closeModal()}>x
+                <button className={"ghost-button"} onClick={() => toggleCreateModal()}>x
                 </button>
             </div>
             <p className={"modalDescription"}>Create your Side Project. Click Save to create it.</p>
@@ -52,7 +47,7 @@ export function CreateProjectModal({modalOpen, closeModal}: createProjectProps):
             <label htmlFor="">Project Budget</label>
             <input type="number" placeholder={"20"} defaultValue={20} onChange={(e) => setBudget(e.target.value)}/>
             <div className={"flex gap-4 justify-end mt-8"}>
-                <button className={"button"} onClick={() => closeModal()}>Cancel</button>
+                <button className={"button"} onClick={() => toggleCreateModal()}>Cancel</button>
                 <button className={"button"} onClick={() => submitProject()}>Create Project</button>
             </div>
         </ModalWrapper>

@@ -1,11 +1,13 @@
 import {type JSX, type ReactNode, useEffect, useState} from "react";
-import type {IProject} from "../interfaces.ts";
+import type {IProject} from "../../interfaces.ts";
 import {ProjectContext} from "./useProjectContext.ts";
 
 
 export const ProjectProvider = ({children}: { children: ReactNode }): JSX.Element => {
     const [projects, setProjects] = useState<IProject[]>([])
     const [selectedProjects, setSelectedProjects] = useState<IProject | undefined>(undefined)
+
+    const [createModalOpen, setCreateModalOpen] = useState<boolean>(false)
 
     async function fetchProjects(): Promise<IProject[]> {
         const response = await fetch("/api/projects", {method: "GET"})
@@ -25,7 +27,9 @@ export const ProjectProvider = ({children}: { children: ReactNode }): JSX.Elemen
             projects: projects,
             selectedProject: selectedProjects,
             setSelectedProject: (project: IProject | undefined) => setSelectedProjects(project),
-            projectRefresh: () => refetchProjects()
+            projectRefresh: () => refetchProjects(),
+            createModalOpen: createModalOpen,
+            toggleCreateModal: () => setCreateModalOpen(!createModalOpen)
         }}>{children}</ProjectContext>
     )
 }
