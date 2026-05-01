@@ -10,9 +10,7 @@ export default defineConfig({
         react(),
         tailwindcss(),
         ViteImageOptimizer({
-            png: {
-                quality: 50
-            },
+            exclude: /icons\.svg$/,
             svg: {
                 multipass: true,
                 plugins: [

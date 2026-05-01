@@ -76,10 +76,16 @@ func main() {
 		router.GET("/favicon.ico", func(c *gin.Context) {
 			c.File("web-app/dist/favicon.ico")
 		})
+		router.GET("/icons.svg", func(c *gin.Context) {
+			c.File("web-app/dist/icons.svg")
+		})
 	} else {
 		fmt.Println("Serving frontend files from embedded source")
 		router.GET("/favicon.ico", func(c *gin.Context) {
 			ServeEmbeddedFile(c, "", "favicon.ico")
+		})
+		router.GET("/icons.svg", func(c *gin.Context) {
+			ServeEmbeddedFile(c, "", "icons.svg")
 		})
 		router.GET("/assets/*filepath", func(c *gin.Context) {
 			assetPath := c.Param("filepath")
