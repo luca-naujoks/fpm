@@ -1,8 +1,9 @@
-import {type JSX, type ReactNode, useState} from "react";
+import {type JSX, type ReactNode, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ProjectSettings} from "./ProjectSettings.tsx";
 import {GeneralSettings} from "./GeneralSettings.tsx";
 import {useProject} from "../../context/projectContext/useProjectContext.ts";
+import {CloseButton} from "../CloseButton.tsx";
 
 interface settingsProps {
     modalOpen: boolean
@@ -16,6 +17,11 @@ export function Settings({modalOpen, closeModal}: settingsProps): JSX.Element {
     const [error, setError] = useState<string>("")
     const [positiveFeedback, setPositiveFeedback] = useState<string>("")
 
+    useEffect(() => {
+        setError("")
+        setPositiveFeedback("")
+    }, [modalOpen]);
+
     return (
         <ModalBackground modalOpen={modalOpen} closeModal={closeModal}>
             <div className={"flex flex-col h-2/3 w-2/3 p-4 bg-(--social-bg) border-2 border-(--border) rounded-md"}
@@ -28,7 +34,7 @@ export function Settings({modalOpen, closeModal}: settingsProps): JSX.Element {
                         <p className={positiveFeedback == "" ? "hidden" : "w-fit h-6 px-1 bg-green-800 rounded-md truncate cursor-pointer"}
                            onClick={() => setPositiveFeedback("")}>{positiveFeedback}</p>
                     </>
-                    <button className={"button"} onClick={closeModal}>x</button>
+                    <CloseButton onClick={closeModal}/>
                 </div>
                 <div className={"flex gap-4 h-full"}>
                     <div className={"flex flex-col h-full w-48 gap-2"}>
@@ -44,8 +50,8 @@ export function Settings({modalOpen, closeModal}: settingsProps): JSX.Element {
                             ))}
                         </div>
                     </div>
-                    <p className={"h-full border-r-2 border-(--border)"}/>
-                    <div className={"w-full overflow-scroll max-h-2/3"}>
+                    <p className={"h-9/10 border-r-2 border-(--border)"}/>
+                    <div className={"w-full overflow-scroll max-h-5/6"}>
                         <BodySwitch navigation={navigation} returnToGeneral={() => setNavigation("general")}
                                     setError={setError} setPositiveFeedback={setPositiveFeedback}/>
                     </div>

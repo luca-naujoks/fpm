@@ -9,7 +9,7 @@ interface PProjectProps {
     setPositiveFeedback: (message: string) => void
 }
 
-export function ProjectSettings({project, returnToGeneral, setError, setPositiveFeedback} : PProjectProps): JSX.Element {
+export function ProjectSettings({project, returnToGeneral, setError, setPositiveFeedback}: PProjectProps): JSX.Element {
     const {projectRefresh} = useProject()
     const [name, setName] = useState<string>(project.name)
     const [description, setDescription] = useState<string>(project.description)
@@ -18,7 +18,6 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
 
     const [importFile, setImportFile] = useState<File>()
     const [transactions, setTransactions] = useState<ITransaction[]>([])
-
 
 
     const [deleteButtonText, setDeleteButtonText] = useState<string>("Delete Project")

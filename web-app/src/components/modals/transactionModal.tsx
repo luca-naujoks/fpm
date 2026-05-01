@@ -3,6 +3,7 @@ import {type JSX, useEffect, useState} from "react";
 import type {ITransaction} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
 import {useTransactionContext} from "../../context/transactionContext/useTransactionModal.ts";
+import {CloseButton} from "../CloseButton.tsx";
 
 export function TransactionModal(): JSX.Element {
     const {
@@ -54,8 +55,7 @@ export function TransactionModal(): JSX.Element {
             <p className={error == "" ? "hidden" : ""}>{error}</p>
             <div className={"w-full flex justify-between items-start"}>
                 <h1 className={"modalHeading"}>Add Transaction</h1>
-                <button className={"ghost-button"} onClick={closeTransactionModal}>x
-                </button>
+                <CloseButton onClick={closeTransactionModal}/>
             </div>
             <label htmlFor="">Description</label>
             <input type="text" placeholder={"Bluray, Special Funds..."} value={description}

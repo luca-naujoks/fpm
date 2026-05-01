@@ -1,8 +1,9 @@
 import './modals.css'
-import {type JSX, useState} from "react";
+import {type JSX, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
 import {useProject} from "../../context/projectContext/useProjectContext.ts";
+import {CloseButton} from "../CloseButton.tsx";
 
 export function CreateProjectModal(): JSX.Element {
     const {projectRefresh, createModalOpen, toggleCreateModal} = useProject()
@@ -31,13 +32,19 @@ export function CreateProjectModal(): JSX.Element {
         projectRefresh()
     }
 
+    useEffect((): void => {
+        setName("")
+        setDescription("")
+        setBudget("20")
+        setError("")
+    }, [createModalOpen]);
+
     return (
         <ModalWrapper modalOpen={createModalOpen} closeModal={toggleCreateModal}>
             <p className={error == "" ? "hidden" : ""}>{error}</p>
             <div className={"w-full flex justify-between items-start"}>
                 <h1 className={"modalHeading"}>Create Project</h1>
-                <button className={"ghost-button"} onClick={() => toggleCreateModal()}>x
-                </button>
+                <CloseButton onClick={toggleCreateModal}/>
             </div>
             <p className={"modalDescription"}>Create your Side Project. Click Save to create it.</p>
             <label htmlFor="">Project Name</label>

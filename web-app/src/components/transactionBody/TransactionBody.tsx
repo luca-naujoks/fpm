@@ -91,7 +91,7 @@ export function TransactionBody(): JSX.Element {
                             className={"max-h-16 max-w-96 text-ellipsis overflow-hidden"}>{selectedProject.description}</span>
                         </span>
                     </div>
-                    <p className={"flex flex-col lg:flex"}>
+                    <p className={"flex flex-col lg:flex-row"}>
                         <span className={"mr-4"}>Monthly Budget: {selectedProject.budget}€ </span>
                         <span>Available Budget: <span
                             className={colorSwitch()}>{budget}€</span></span>
