@@ -1,12 +1,9 @@
 services:
   fpm:
-    container_name: financial-project-management
-    image: fpm:latest
+    container_name: financial-project-management-v2
+    image: ghcr.io/luca-naujoks/fpm:v2.0
     ports:
-      - "3000:3000"
+      - "80:6060"
     volumes:
-      - prisma-data:/app/prisma
+      - ./db:/app/db
     restart: unless-stopped
-
-volumes:
-  prisma-data:

@@ -1,53 +1,53 @@
-FROM node:24-slim AS deps
+# stage 1: build frontend to single index.html
+FROM oven/bun AS frontend
 
-# set the working directory to /app
 WORKDIR /app
 
-# copy package.json for dep installation
-COPY package*.json ./
+# Copy package.json and bun.lock
+COPY web-app/package.json web-app/bun.lock ./
 
-# run npm clean install to install deps
-RUN npm install
+# Install dependencies#
+RUN bun install
 
+# Copy the frontend
+COPY web-app /app/
 
-FROM node:24-slim AS builder
-ENV NEXT_TELEMETRY_DISABLED=1
+# Build frontend
+RUN bun run build
 
-# set the working directory to /app
+# stage 2: Build GO binary
+FROM golang:1.26-alpine AS builder
+
 WORKDIR /app
 
-# copy nextjs content
-COPY . .
+COPY go.mod go.sum* ./
 
-# copy node_modules from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+RUN go mod download
 
-RUN npx prisma generate --schema=./prisma/schema.prisma
+# Pre-compile go-sqlite3 to avoid doing this every time
+# RUN CGO_ENABLED=1 go build -tags musl -o /dev/null github.com/mattn/go-sqlite3
 
-# build the next app
-RUN npm run build
+# Copy frontend build files
+COPY --from=frontend /app/dist /app/web-app/dist
 
-FROM node:24-slim AS prod
+# Copy GO source files
+COPY *.go .
+COPY internal ./internal
+
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o main .
+
+# stage 3: build minimal run image
+FROM scratch
+
+ENV GIN_MODE=release
+
 WORKDIR /app
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 
-# Install dependencies needed for prisma CLI at runtime
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
+# Copy GO Binary
+COPY --from=builder /app/main .
 
-COPY --from=builder /app/public ./public
+# Expose Port
+EXPOSE 6060
 
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# copy prisma folder with schema, migrations, and generated client
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./
-
-# expose port 3000
-EXPOSE 3000
-
-# command to run migrations on startup and then start the app
-ENV HOSTNAME="0.0.0.0"
-CMD ["/bin/sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma && node server.js"]
+# Command to run Application
+ENTRYPOINT ["./main"]
