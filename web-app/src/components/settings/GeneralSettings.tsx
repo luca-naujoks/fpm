@@ -7,6 +7,7 @@ export function GeneralSettings(): JSX.Element {
             <p>Use the Sidebar in the Settings Container to navigate projects, allowing you to Modify or Import/Export
                 their transactions.</p>
             <p className={"border border-(--border) my-4"}/>
+            <p className={"text-center"}>Maybe future application global settings</p>
         </div>
     )
 }

@@ -74,13 +74,13 @@ func InitDatabaseTables() error {
 	sqlStatements :=
 		[]string{
 			`CREATE TABLE IF NOT EXISTS projects (
-        id INTEGER PRIMARY KEY AUTOINCREMENT ,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name     TEXT NOT NULL,
         description TEXT,
     	budget INTEGER
     );`,
 			`CREATE TABLE IF NOT EXISTS transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT ,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         projectId INTEGER,
         description TEXT,
     	amount REAL default 0,

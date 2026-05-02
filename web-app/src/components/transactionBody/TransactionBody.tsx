@@ -126,6 +126,12 @@ function TransactionRow({transaction}: { transaction: ITransaction }): JSX.Eleme
     const [contextMenuOpen, setContextMenuOpen] = useState<boolean>(false)
     const [position, setPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
 
+    const options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    };
+
     return (
         <>
             <ContextMenu key={position.x + position.y} position={position} open={contextMenuOpen}
@@ -138,7 +144,7 @@ function TransactionRow({transaction}: { transaction: ITransaction }): JSX.Eleme
             }}>
                 <td>{transaction.amount > 0 ? <span className={"text-green-600"}>Income</span> :
                     <span className={"text-yellow-600"}>Expense</span>}</td>
-                <td>{transactionDate.toLocaleDateString('en-GB').replace("/", ".")}</td>
+                <td>{transactionDate.toLocaleDateString('de-DE', options)}</td>
                 <td>{transaction.amount > 0 ?
                     <span className={"text-green-600"}>{transaction.amount} €</span> :
                     <span className={"text-yellow-600"}>{transaction.amount} €</span>
