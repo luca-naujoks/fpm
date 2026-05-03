@@ -22,7 +22,7 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
 
     const [deleteButtonText, setDeleteButtonText] = useState<string>("Delete Project")
 
-    const disableUpdateButton = name == project.name && description == project.description && budgetAsNumber == project.budget
+    const disableUpdateButton: boolean = name == project.name && description == project.description && budgetAsNumber == project.budget
 
     async function updateProject() {
         const body: IProject = {
@@ -39,6 +39,7 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
         }
         setError("")
         setPositiveFeedback(data.toString())
+        projectRefresh()
     }
 
     async function deleteProject() {

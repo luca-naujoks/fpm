@@ -5,7 +5,7 @@ import {ProjectContext} from "./useProjectContext.ts";
 
 export const ProjectProvider = ({children}: { children: ReactNode }): JSX.Element => {
     const [projects, setProjects] = useState<IProject[]>([])
-    const [selectedProjects, setSelectedProjects] = useState<IProject | undefined>(undefined)
+    const [selectedProject, setSelectedProject] = useState<IProject | undefined>(undefined)
 
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false)
 
@@ -15,7 +15,16 @@ export const ProjectProvider = ({children}: { children: ReactNode }): JSX.Elemen
     }
 
     function refetchProjects(): void {
-        fetchProjects().then((projects: IProject[]) => setProjects(projects))
+        function afterFetch(projects: IProject[]) {
+            setProjects(projects)
+            if (!selectedProject) {
+                return
+            }
+            const updatedSelectedProject: IProject = projects.filter((project) => project.id == selectedProject.id)[0]
+            setSelectedProject(updatedSelectedProject)
+        }
+
+        fetchProjects().then((projects: IProject[]) => afterFetch(projects))
     }
 
     useEffect(() => {
@@ -25,8 +34,8 @@ export const ProjectProvider = ({children}: { children: ReactNode }): JSX.Elemen
     return (
         <ProjectContext value={{
             projects: projects,
-            selectedProject: selectedProjects,
-            setSelectedProject: (project: IProject | undefined) => setSelectedProjects(project),
+            selectedProject: selectedProject,
+            setSelectedProject: (project: IProject | undefined) => setSelectedProject(project),
             projectRefresh: () => refetchProjects(),
             createModalOpen: createModalOpen,
             toggleCreateModal: () => setCreateModalOpen(!createModalOpen)

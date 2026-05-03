@@ -20,7 +20,7 @@ export const SidebarProvider = ({children}: {
     }, []);
 
     useEffect(() => {
-        if (width >= 1024) {
+        if (width >= 512) {
             setSidebarOpen(true)
         } else {
             setSidebarOpen(false)
