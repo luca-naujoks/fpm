@@ -1,6 +1,6 @@
-import {type JSX} from "react";
+import {type ReactNode} from "react";
 
-export function GeneralSettings(): JSX.Element {
+export function GeneralSettings(): ReactNode {
     return (
         <div>
             <h1 className={"mb-2"}>General Settings</h1>

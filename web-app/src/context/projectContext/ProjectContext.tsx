@@ -1,9 +1,9 @@
-import {type JSX, type ReactNode, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ProjectContext} from "./useProjectContext.ts";
 
 
-export const ProjectProvider = ({children}: { children: ReactNode }): JSX.Element => {
+export const ProjectProvider = ({children}: { children: ReactNode }): ReactNode => {
     const [projects, setProjects] = useState<IProject[]>([])
     const [selectedProject, setSelectedProject] = useState<IProject | undefined>(undefined)
 

@@ -1,9 +1,9 @@
-import {type JSX, type ReactNode, useState} from "react";
+import {type ReactNode, useState} from "react";
 import type {ITransaction} from "../../interfaces.ts";
 import {TransactionContext} from "./useTransactionModal.ts";
 
 
-export const TransactionProvider = ({children}: { children: ReactNode }): JSX.Element => {
+export const TransactionProvider = ({children}: { children: ReactNode }): ReactNode => {
     const emptyTransaction: ITransaction = {
         id: 0,
         project_id: 0,

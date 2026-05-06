@@ -1,7 +1,7 @@
-import {type JSX, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 
-export function AvailableBudget(): JSX.Element {
+export function AvailableBudget(): ReactNode {
     const [budget, setBudget] = useState<number>(0)
 
     async function fetchTotalProjectBudget(): Promise<number> {

@@ -1,6 +1,6 @@
-import {type JSX, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 
-export function SpendBudget(): JSX.Element {
+export function SpendBudget(): ReactNode {
     const [spendBudget, setSpendBudget] = useState<number>(0)
 
     async function fetchTotalProjectBudget(): Promise<number> {

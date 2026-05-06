@@ -1,11 +1,11 @@
 import './modals.css'
-import {type JSX, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import type {ITransaction} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
 import {useTransactionContext} from "../../context/transactionContext/useTransactionModal.ts";
 import {CloseButton} from "../CloseButton.tsx";
 
-export function TransactionModal(): JSX.Element {
+export function TransactionModal(): ReactNode {
     const {
         closeTransactionModal,
         fetchTransactions,

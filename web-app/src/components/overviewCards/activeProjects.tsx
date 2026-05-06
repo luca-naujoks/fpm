@@ -1,7 +1,7 @@
-import {type JSX} from "react";
+import {type ReactNode} from "react";
 import {useProject} from "../../context/projectContext/useProjectContext.ts";
 
-export function ActiveProjects(): JSX.Element {
+export function ActiveProjects(): ReactNode {
     const {projects} = useProject()
 
     return (

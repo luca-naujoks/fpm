@@ -1,11 +1,11 @@
 import './modals.css'
-import {type JSX, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ModalWrapper} from "./wrapper.tsx";
 import {useProject} from "../../context/projectContext/useProjectContext.ts";
 import {CloseButton} from "../CloseButton.tsx";
 
-export function CreateProjectModal(): JSX.Element {
+export function CreateProjectModal(): ReactNode {
     const {projectRefresh, createModalOpen, toggleCreateModal} = useProject()
 
     const [name, setName] = useState<string>("")

@@ -1,4 +1,4 @@
-import {type JSX, type ReactNode, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import type {IProject} from "../../interfaces.ts";
 import {ProjectSettings} from "./ProjectSettings.tsx";
 import {GeneralSettings} from "./GeneralSettings.tsx";
@@ -10,7 +10,7 @@ interface settingsProps {
     closeModal: () => void
 }
 
-export function Settings({modalOpen, closeModal}: settingsProps): JSX.Element {
+export function Settings({modalOpen, closeModal}: settingsProps): ReactNode {
     const {projects} = useProject()
     const [navigation, setNavigation] = useState<IProject | "general">("general")
 
@@ -24,8 +24,9 @@ export function Settings({modalOpen, closeModal}: settingsProps): JSX.Element {
 
     return (
         <ModalBackground modalOpen={modalOpen} closeModal={closeModal}>
-            <div className={"flex flex-col h-2/3 w-2/3 p-4 bg-(--social-bg) border-2 border-(--border) rounded-md"}
-                 onClick={(event) => event.stopPropagation()}>
+            <div
+                className={"flex flex-col h-2/3 w-full lg:w-2/3 p-4 bg-(--social-bg) border-2 border-(--border) rounded-md"}
+                onClick={(event) => event.stopPropagation()}>
                 <div className={"flex justify-between mb-4"}>
                     <h1>Settings</h1>
                     <>
@@ -68,7 +69,7 @@ interface PBodyProps {
     setPositiveFeedback: (message: string) => void
 }
 
-function BodySwitch({navigation, returnToGeneral, setError, setPositiveFeedback}: PBodyProps): JSX.Element {
+function BodySwitch({navigation, returnToGeneral, setError, setPositiveFeedback}: PBodyProps): ReactNode {
     switch (navigation) {
         case "general":
             return <GeneralSettings/>

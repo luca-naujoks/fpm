@@ -1,5 +1,5 @@
 import type {IProject, ITransaction} from "../../interfaces.ts";
-import {type ChangeEvent, type JSX, useCallback, useEffect, useState} from "react";
+import {type ChangeEvent, type ReactNode, useCallback, useEffect, useState} from "react";
 import {useProject} from "../../context/projectContext/useProjectContext.ts";
 
 interface PProjectProps {
@@ -9,7 +9,7 @@ interface PProjectProps {
     setPositiveFeedback: (message: string) => void
 }
 
-export function ProjectSettings({project, returnToGeneral, setError, setPositiveFeedback}: PProjectProps): JSX.Element {
+export function ProjectSettings({project, returnToGeneral, setError, setPositiveFeedback}: PProjectProps): ReactNode {
     const {projectRefresh} = useProject()
     const [name, setName] = useState<string>(project.name)
     const [description, setDescription] = useState<string>(project.description)

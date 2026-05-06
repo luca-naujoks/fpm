@@ -1,11 +1,11 @@
-import {type JSX, type ReactNode, useEffect, useState} from "react";
+import {type ReactNode, useEffect, useState} from "react";
 import {SidebarContext} from "./useSidebarContext.ts";
 
 
 export const SidebarProvider = ({children}: {
     children: ReactNode,
     value?: { sidebarOpen: boolean | undefined; toggleSidebar: () => void }
-}): JSX.Element => {
+}): ReactNode => {
     const [width, setWidth] = useState<number>(window.innerWidth)
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true)
 
