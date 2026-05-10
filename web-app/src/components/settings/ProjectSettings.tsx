@@ -153,17 +153,19 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
             <p className={"border border-(--border) my-4"}/>
             <div className={"flex flex-col gap-4"}>
                 <h2>Import / Export</h2>
-                <div className={"flex gap-4"}>
+                <div className={"flex flex-col lg:flex-row gap-4"}>
                     <input type={"file"} accept={".json"}
                            className={"w-12 text-base bg-(--social-bg) hover:bg-(--social-bg)/90 border-(--border) border rounded-sm px-2 cursor-pointer"}
                            onChange={onFileChange}/>
-                    <button className={"button"} onClick={() => importTransactions()}
-                            disabled={!importFile}>Import
-                    </button>
-                    <button className={"button"} onClick={() => exportTransactions()}
-                            disabled={transactions.length <= 0}
-                    >Export
-                    </button>
+                    <>
+                        <button className={"button"} onClick={() => importTransactions()}
+                                disabled={!importFile}>Import
+                        </button>
+                        <button className={"button"} onClick={() => exportTransactions()}
+                                disabled={transactions.length <= 0}
+                        >Export
+                        </button>
+                    </>
                 </div>
 
             </div>

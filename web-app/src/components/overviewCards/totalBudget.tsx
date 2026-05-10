@@ -1,14 +1,12 @@
 import {type ReactNode, useEffect, useState} from "react";
-import type {IProject} from "../../interfaces.ts";
+import {useProject} from "../../context/projectContext/useProjectContext.ts";
 
 export function TotalBudget(): ReactNode {
+    const {projects} = useProject()
     const [monthlyBudget, setMonthlyBudget] = useState<number>(0)
 
-    async function fetchTotalProjectBudget(): Promise<number> {
+    function fetchTotalProjectBudget(): number {
         let budget: number = 0
-
-        const projectResponse = await fetch("/api/projects", {method: "GET"})
-        const projects: IProject[] = await projectResponse.json()
 
         for (let i = 0; i < projects.length; i++) {
             budget = budget + projects[i].budget
@@ -18,7 +16,8 @@ export function TotalBudget(): ReactNode {
     }
 
     useEffect(() => {
-        fetchTotalProjectBudget().then((budget: number) => setMonthlyBudget(budget))
+        const budget: number = fetchTotalProjectBudget()
+        setMonthlyBudget(budget)
     }, []);
 
     return (

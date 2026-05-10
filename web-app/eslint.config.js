@@ -7,6 +7,14 @@ import {defineConfig, globalIgnores} from 'eslint/config'
 
 export default defineConfig([
     globalIgnores(['dist']),
+    tseslint.configs.recommendedTypeChecked,
+    {
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+            },
+        },
+    },
     {
         files: ['**/*.{ts,tsx}'],
         extends: [

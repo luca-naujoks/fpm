@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gin-gonic/contrib/gzip"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +22,7 @@ func main() {
 	go jobs.NewScheduler()
 
 	router := gin.Default()
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	// create api group to serve backend functionalities
 	api := router.Group("/api")
