@@ -108,7 +108,7 @@ export function TransactionBody(): ReactNode {
             <ContextMenu key={contextMenuProps.position.x + contextMenuProps.position.y} props={contextMenuProps}
             />
             <div className={"max-h-[95%] lg:max-h-screen overflow-scroll pb-8"}
-                 onClick={sidebarOpen && window.innerWidth <= 512 ? toggleSidebar : () => void{}}>
+                 onClick={sidebarOpen && window.innerWidth <= 512 ? toggleSidebar : () => void {}}>
                 <div id={"TransactionHead"} className={"flex flex-col mr-1"}>
                     <div className={"flex"}>
                         <BurgerMenuButton/>
@@ -121,9 +121,9 @@ export function TransactionBody(): ReactNode {
                     <p className={"border border-(--border) w-full lg:w-1/2 my-2"}/>
                     <div className={"flex justify-between items-end"}>
                         <p className={"flex flex-col lg:flex-row"}>
-                            <span className={"mr-4"}>Monthly Budget: {selectedProject.budget}€ </span>
+                            <span className={"mr-4"}>Monthly Budget: {selectedProject.budget.toFixed(2)}€ </span>
                             <span>Available Budget: <span
-                                className={colorSwitch()}>{budget}€</span></span>
+                                className={colorSwitch()}>{budget.toFixed(2)}€</span></span>
                         </p>
                         <button className={"button"} onClick={() => openTransactionModal(transactionModalProps)}>
                             Add Transaction
@@ -165,16 +165,21 @@ export function TransactionBody(): ReactNode {
                                     openMenuAt({clientX: e.clientX, clientY: e.clientY}, transaction)
                                 }, 450) // adjust (300-600ms is typical)
                             }}
-                            onPointerUp={() => clearLongPressTimer()}
-                            onPointerCancel={() => clearLongPressTimer()}
-                            onPointerLeave={() => clearLongPressTimer()}>
-                            <td>{transaction.amount > 0 ? <span className={"text-green-600"}>Income</span> :
-                                <span className={"text-yellow-600"}>Expense</span>}</td>
-                            <td>{new Date(transaction.date).toLocaleDateString('de-DE', options)}</td>
-                            <td>{transaction.amount > 0 ?
-                                <span className={"text-green-600"}>{transaction.amount} €</span> :
-                                <span className={"text-yellow-600"}>{transaction.amount} €</span>
-                            }</td>
+                            onPointerUp={() => clearLongPressTimer}
+                            onPointerCancel={() => clearLongPressTimer}
+                            onPointerLeave={() => clearLongPressTimer}>
+                            <td>
+                                {transaction.amount > 0 ?
+                                    <span className={"text-green-600"}>Income</span> :
+                                    <span className={"text-yellow-600"}>Expense</span>
+                                }
+                            </td>
+                            <td>
+                                {new Date(transaction.date).toLocaleDateString('de-DE', options)}
+                            </td>
+                            <td className={transaction.amount > 0 ? "text-green-600" : "text-yellow-600"}>
+                                {transaction.amount.toFixed(2)} €
+                            </td>
                             <td>{transaction.description}</td>
                         </tr>
                     )}
@@ -188,7 +193,7 @@ export function TransactionBody(): ReactNode {
 function Overview(): ReactNode {
     const {sidebarOpen, toggleSidebar} = useSidebar()
     return (
-        <div className={"w-full"} onClick={sidebarOpen && window.innerWidth <= 512 ? toggleSidebar : () => void{}}>
+        <div className={"w-full"} onClick={sidebarOpen && window.innerWidth <= 512 ? toggleSidebar : () => void {}}>
             <div className={"flex gap-2 mb-4 items-center"}>
                 <BurgerMenuButton/>
                 <h1 className={""}>Home Overview</h1>

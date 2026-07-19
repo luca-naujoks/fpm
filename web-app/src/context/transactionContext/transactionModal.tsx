@@ -21,12 +21,12 @@ export const TransactionProvider = ({children}: { children: ReactNode }): ReactN
         setTransactions(data)
     }
 
-    async function openTransactionModal(transaction: ITransaction) {
+    function openTransactionModal(transaction: ITransaction) {
         setTransactionDefaults(transaction)
         setTransactionModalOpen(true)
     }
 
-    async function closeTransactionModal() {
+    function closeTransactionModal() {
         setTransactionDefaults(emptyTransaction)
         setTransactionModalOpen(false)
     }
