@@ -16,7 +16,7 @@ export const TransactionProvider = ({children}: { children: ReactNode }): ReactN
     const [transactionModalOpen, setTransactionModalOpen] = useState<boolean>(false)
 
     async function fetchTransactions(projectId: number): Promise<void> {
-        const response = await fetch(`/api/transactions?projectId=${projectId}`, {method: "GET"})
+        const response = await fetch(`/api/transactions?project_id=${projectId}`, {method: "GET"})
         const data: ITransaction[] = await response.json()
         setTransactions(data)
     }

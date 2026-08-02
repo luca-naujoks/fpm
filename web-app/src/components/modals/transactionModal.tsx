@@ -26,8 +26,6 @@ export function TransactionModal(): ReactNode {
 
 
     async function createTransaction() {
-        console.log(date)
-        console.log(new Date(date))
         const transaction: ITransaction = {
             id: transactionDefaults.id,
             project_id: transactionDefaults.project_id,

@@ -1,16 +1,15 @@
 package main
 
 import (
+	"embed"
 	"financial-planner/internal/database"
 	"financial-planner/internal/jobs"
-	"financial-planner/internal/webContent"
+	"financial-planner/internal/server"
 	"fmt"
-	"os"
-
-	"github.com/gin-gonic/contrib/gzip"
-
-	"github.com/gin-gonic/gin"
 )
+
+//go:embed web-app/dist
+var embededContent embed.FS
 
 func main() {
 	err := database.New()
@@ -21,89 +20,26 @@ func main() {
 
 	go jobs.NewScheduler()
 
-	router := gin.Default()
-	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	r := server.New(":80", embededContent)
 
-	// create api group to serve backend functionalities
-	api := router.Group("/api")
-	{
-		api.GET("/projects", func(c *gin.Context) {
-			webContent.GetProjects(c)
-		})
-		api.POST("/project", func(c *gin.Context) {
-			webContent.CreateProject(c)
-		})
-		api.PUT("/project", func(c *gin.Context) {
-			webContent.EditProject(c)
-		})
-		api.DELETE("/project", func(c *gin.Context) {
-			webContent.DeleteProject(c)
-		})
+	r.GET("/api/projects", server.GetProjects)
+	r.POST("/api/project", server.CreateProject)
+	r.PUT("/api/project", server.EditProject)
+	r.DELETE("/api/project", server.DeleteProject)
 
-		api.GET("/project/budget", func(c *gin.Context) {
-			webContent.GetProjectBudget(c)
-		})
-		api.GET("/spend", func(c *gin.Context) {
-			webContent.GetProjectSpend(c)
-		})
+	r.GET("/api/project/budget", server.GetProjectBudget)
+	r.GET("/api/spend", server.GetProjectSpend)
 
-		api.GET("/transactions", func(c *gin.Context) {
-			webContent.GetTransactions(c)
-		})
-		api.POST("/transaction", func(c *gin.Context) {
-			webContent.CreateTransactions(c)
-		})
-		api.PUT("/transaction", func(c *gin.Context) {
-			webContent.EditTransactions(c)
-		})
-		api.DELETE("/transaction", func(c *gin.Context) {
-			webContent.DeleteTransactions(c)
-		})
-		api.PUT("/transaction/import", func(c *gin.Context) {
-			webContent.ImportTransactions(c)
-		})
-		api.GET("/transaction/export", func(c *gin.Context) {
-			webContent.ExportTransactions(c)
-		})
+	r.GET("/api/transactions", server.GetTransactions)
+	r.POST("/api/transaction", server.CreateTransactions)
+	r.PUT("/api/transaction", server.EditTransactions)
+	r.DELETE("/api/transaction", server.DeleteTransactions)
+	r.PUT("/api/transaction/import", server.ImportTransactions)
+	r.GET("/api/transaction/export", server.ExportTransactions)
 
-	}
-
-	// Serve frontend files
-	_, err = os.Stat("web-app/dist")
-	if err == nil {
-		fmt.Println("Serving frontend files from local source")
-		router.Static("/assets", "web-app/dist/assets")
-		router.GET("/", func(c *gin.Context) {
-			c.File("web-app/dist/index.html")
-		})
-		router.GET("/favicon.ico", func(c *gin.Context) {
-			c.File("web-app/dist/favicon.ico")
-		})
-		router.GET("/icons.svg", func(c *gin.Context) {
-			c.File("web-app/dist/icons.svg")
-		})
-	} else {
-		fmt.Println("Serving frontend files from embedded source")
-		router.GET("/favicon.ico", func(c *gin.Context) {
-			ServeEmbeddedFile(c, "", "favicon.ico")
-		})
-		router.GET("/icons.svg", func(c *gin.Context) {
-			ServeEmbeddedFile(c, "", "icons.svg")
-		})
-		router.GET("/assets/*filepath", func(c *gin.Context) {
-			assetPath := c.Param("filepath")
-			fmt.Printf("Serving asset: %s\n", assetPath)
-			ServeEmbeddedFile(c, "assets", assetPath)
-		})
-		router.GET("/", func(c *gin.Context) {
-			ServeEmbeddedFile(c, "", "index.html")
-		})
-	}
-
-	fmt.Println("Server started on Interface :6060")
-	err = router.Run(":6060")
+	err = r.Run()
 	if err != nil {
-		errMessage := fmt.Errorf("failed to run server: %v", err)
-		fmt.Println(errMessage)
+		fmt.Printf("Server Exited with error: %s", err.Error())
+		return
 	}
 }

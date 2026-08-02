@@ -16,3 +16,8 @@ type Transaction struct {
 	Amount      float64   `json:"amount"`
 	Date        time.Time `json:"date"`
 }
+
+type ImportBody struct {
+	ProjectId    int           `json:"project_id"`
+	Transactions []Transaction `json:"transactions"`
+}

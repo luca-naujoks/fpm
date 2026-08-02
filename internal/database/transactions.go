@@ -1,7 +1,23 @@
 package database
 
-import "financial-planner/internal/models"
+import (
+	"database/sql"
+	"financial-planner/internal/models"
+)
 
+func GetTotalSpend() (float64, error) {
+	var sum sql.NullFloat64
+	sqlQuery := `SELECT SUM(amount) FROM transactions WHERE amount < 0`
+
+	row := db.QueryRow(sqlQuery)
+
+	err := row.Scan(&sum)
+	if err != nil {
+		return 0, err
+	}
+
+	return sum.Float64, nil
+}
 func GetProjectTransactions(projectId int) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	transactions = []models.Transaction{}

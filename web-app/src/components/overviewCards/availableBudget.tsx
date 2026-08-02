@@ -9,9 +9,9 @@ export function AvailableBudget(): ReactNode {
         let budget: number = 0
 
         for (let i = 0; i < projects.length; i++) {
-            const response = await fetch(`/api/project/budget?projectId=${projects[i].id}`, {method: "GET"})
-            const projectBudget: number = await response.json()
-            budget = budget + projectBudget
+            const response = await fetch(`/api/project/budget?project_id=${projects[i].id}`, {method: "GET"})
+            const data: { "value": number } = await response.json() as { "value": number }
+            budget = budget + data.value
         }
 
         return budget

@@ -12,7 +12,7 @@ export function ContextMenu({props}: { props: IContextMenuProps }) {
     const {openTransactionModal, fetchTransactions} = useTransactionContext()
 
     async function deleteTransaction() {
-        const response = await fetch(`/api/transaction?transactionId=${props.transaction.id}`, {method: "DELETE"})
+        const response = await fetch(`/api/transaction?transaction_id=${props.transaction.id}`, {method: "DELETE"})
         if (!response.ok) {
             alert("failed to delete Transaction")
             return

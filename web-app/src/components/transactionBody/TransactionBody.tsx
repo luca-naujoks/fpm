@@ -63,8 +63,10 @@ export function TransactionBody(): ReactNode {
         if (!selectedProject) {
             return 0
         }
-        const response = await fetch(`/api/project/budget?projectId=${selectedProject?.id}`, {method: "GET"})
-        return await response.json()
+        const response = await fetch(`/api/project/budget?project_id=${selectedProject?.id}`, {method: "GET"})
+        const data: { value: number } = await response.json() as { value: number }
+
+        return data.value
     }, [selectedProject])
 
     useEffect(() => {

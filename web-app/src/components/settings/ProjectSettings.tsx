@@ -32,13 +32,14 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
             budget: budgetAsNumber
         }
         const response = await fetch("/api/project", {method: "PUT", body: JSON.stringify(body)})
-        const data = await response.json()
         if (!response.ok) {
-            setError(data)
+            const data: { "error": string } = await response.json() as { "error": string }
+            setError(data.error)
             return
         }
+        const data: { "success": string } = await response.json() as { "success": string }
         setError("")
-        setPositiveFeedback(data.toString())
+        setPositiveFeedback(data.success)
         projectRefresh()
     }
 
@@ -48,7 +49,7 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
             return
         }
 
-        const response = await fetch(`/api/project?projectId=${project.id}`, {method: "DELETE"})
+        const response = await fetch(`/api/project?project_id=${project.id}`, {method: "DELETE"})
         const data = await response.json()
         if (!response.ok) {
             setError(data)
@@ -119,7 +120,7 @@ export function ProjectSettings({project, returnToGeneral, setError, setPositive
     }
 
     const fetchProjectTransactions: () => Promise<ITransaction[]> = useCallback(async (): Promise<ITransaction[]> => {
-        const response = await fetch(`/api/transactions?projectId=${project.id}`)
+        const response = await fetch(`/api/transactions?project_id=${project.id}`)
         return await response.json()
     }, [project])
 

@@ -24,9 +24,6 @@ COPY go.mod go.sum* ./
 
 RUN go mod download
 
-# Pre-compile go-sqlite3 to avoid doing this every time
-# RUN CGO_ENABLED=1 go build -tags musl -o /dev/null github.com/mattn/go-sqlite3
-
 # Copy frontend build files
 COPY --from=frontend /app/dist /app/web-app/dist
 
@@ -39,15 +36,13 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o main .
 # stage 3: build minimal run image
 FROM scratch
 
-ENV GIN_MODE=release
-
 WORKDIR /app
 
 # Copy GO Binary
 COPY --from=builder /app/main .
 
 # Expose Port
-EXPOSE 6060
+EXPOSE 80
 
 # Command to run Application
 ENTRYPOINT ["./main"]

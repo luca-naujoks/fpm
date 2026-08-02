@@ -70,24 +70,24 @@ func UpdateProject(project models.Project) (int, error) {
 	return project.Id, nil
 }
 
-func DeleteProject(projectId int) (removedTransactions int64, err error) {
+func DeleteProject(projectId int) error {
 	sqlQueryProject := `DELETE FROM projects WHERE id = ?`
 	sqlQueryTransaction := `DELETE FROM transactions WHERE projectId = ?`
 
 	// First Delete Transactions
 	transactionResults, err := db.Exec(sqlQueryTransaction, projectId)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	_, err = db.Exec(sqlQueryProject, projectId)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	affectedTransactions, err := transactionResults.RowsAffected()
+	_, err = transactionResults.RowsAffected()
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return affectedTransactions, nil
+	return nil
 }

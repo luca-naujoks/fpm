@@ -6,7 +6,9 @@ export function SpendBudget(): ReactNode {
     async function fetchTotalProjectBudget(): Promise<number> {
         const projectResponse = await fetch("/api/spend", {method: "GET"})
 
-        return await projectResponse.json()
+        const data: { value: number } = await projectResponse.json() as { value: number };
+
+        return data.value
     }
 
     useEffect(() => {
