@@ -2,40 +2,48 @@ package main
 
 import (
 	"embed"
+	"financial-planner/internal/api"
 	"financial-planner/internal/database"
 	"financial-planner/internal/jobs"
-	"financial-planner/internal/server"
 	"fmt"
+	"io/fs"
+
+	"github.com/luca-naujoks/webserve"
 )
 
-//go:embed web-app/dist
-var embededContent embed.FS
+//go:embed solid-web/dist/client
+var embeddedContent embed.FS
 
 func main() {
-	err := database.New()
+	webFS, err := fs.Sub(embeddedContent, "solid-web/dist/client")
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err.Error())
+	}
+
+	err = database.New()
+	if err != nil {
+		panic(err.Error())
 	}
 
 	go jobs.NewScheduler()
 
-	r := server.New(":80", embededContent)
+	r := webserve.New(80, webFS)
 
-	r.GET("/api/projects", server.GetProjects)
-	r.POST("/api/project", server.CreateProject)
-	r.PUT("/api/project", server.EditProject)
-	r.DELETE("/api/project", server.DeleteProject)
+	r.Get("/api/projects", api.GetProjects)
+	r.Get("/api/projects/spend", api.GetProjectSpend)
 
-	r.GET("/api/project/budget", server.GetProjectBudget)
-	r.GET("/api/spend", server.GetProjectSpend)
+	r.Get("/api/project/{id}", api.GetProject)
+	r.Post("/api/project", api.CreateProject)
+	r.Put("/api/project", api.EditProject)
+	r.Delete("/api/project", api.DeleteProject)
 
-	r.GET("/api/transactions", server.GetTransactions)
-	r.POST("/api/transaction", server.CreateTransactions)
-	r.PUT("/api/transaction", server.EditTransactions)
-	r.DELETE("/api/transaction", server.DeleteTransactions)
-	r.PUT("/api/transaction/import", server.ImportTransactions)
-	r.GET("/api/transaction/export", server.ExportTransactions)
+	r.Get("/api/project/{id}/transactions", api.GetTransactions)
+	r.Post("/api/project/{id}/transaction", api.CreateTransaction)
+	r.Put("/api/project/{id}/transaction", api.EditTransaction)
+	r.Delete("/api/project/{id}/transaction", api.DeleteTransaction)
+
+	r.Get("/api/transaction/export", api.ExportTransactions)
+	r.Put("/api/transaction/import", api.ImportTransactions)
 
 	err = r.Run()
 	if err != nil {

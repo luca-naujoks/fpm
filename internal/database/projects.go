@@ -5,9 +5,9 @@ import (
 	"financial-planner/internal/models"
 )
 
-func GetProjects() ([]models.Project, error) {
-	var projects []models.Project
-	projects = []models.Project{}
+func GetProjects() ([]models.ProjectPreview, error) {
+	var projects []models.ProjectPreview
+	projects = []models.ProjectPreview{}
 	sqlQuery := `SELECT * FROM projects`
 
 	rows, err := db.Query(sqlQuery)
@@ -17,11 +17,19 @@ func GetProjects() ([]models.Project, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		project := &models.Project{}
+		project := &models.ProjectPreview{}
 		err := rows.Scan(&project.Id, &project.Name, &project.Description, &project.Budget)
 		if err != nil {
 			return nil, err
 		}
+
+		transaction, _ := GetLastTransaction(project.Id)
+		project.LastTransaction = transaction
+
+		transactions, _ := GetProjectTransactions(project.Id)
+		total := combineTransactions(transactions)
+		project.AvailableBudget = total
+
 		projects = append(projects, *project)
 	}
 	if err := rows.Err(); err != nil {
@@ -29,6 +37,25 @@ func GetProjects() ([]models.Project, error) {
 	}
 
 	return projects, nil
+}
+func GetProject(id int) (models.ProjectPreview, error) {
+	var project models.ProjectPreview
+	sqlQuery := `SELECT * FROM projects WHERE id = ?`
+
+	row := db.QueryRow(sqlQuery, id)
+	err := row.Scan(&project.Id, &project.Name, &project.Description, &project.Budget)
+	if err != nil {
+		return models.ProjectPreview{}, err
+	}
+
+	transaction, _ := GetLastTransaction(project.Id)
+	project.LastTransaction = transaction
+
+	transactions, _ := GetProjectTransactions(project.Id)
+	total := combineTransactions(transactions)
+	project.AvailableBudget = total
+
+	return project, nil
 }
 
 func GetBudgetFromProject(projectId int) (float64, error) {

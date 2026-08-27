@@ -1,0 +1,35 @@
+{
+  "name": "example-with-tailwindcss",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "vitest",
+    "lint": "oxlint -c oxlint.config.mjs src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@solidjs/testing-library": "1.0.0-beta.2",
+    "@solidjs/vite-plugin": "^3.0.0-next.34",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^6.10.0",
+    "filesystem-routing": "0.2.1",
+    "jsdom": "^25.0.1",
+    "oxlint": "~1.79.0",
+    "solid-devtools": "^0.34.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "@solidjs/meta": "^1.0.0-next.2",
+    "@solidjs/router": "^2.0.0-next.18",
+    "@solidjs/web": "^2.0.0-rc.0",
+    "solid-js": "^2.0.0-rc.3"
+  }
+}

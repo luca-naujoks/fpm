@@ -44,6 +44,19 @@ func GetProjectTransactions(projectId int) ([]models.Transaction, error) {
 	return transactions, nil
 }
 
+func GetLastTransaction(projectId int) (models.Transaction, error) {
+	var transaction models.Transaction
+	sqlQuery := `SELECT id, projectId, description, amount, date FROM transactions WHERE projectId = ? ORDER BY date DESC LIMIT 1`
+
+	row := db.QueryRow(sqlQuery, projectId)
+	err := row.Scan(&transaction.Id, &transaction.ProjectId, &transaction.Description, &transaction.Amount, &transaction.Date)
+	if err != nil {
+		return models.Transaction{}, err
+	}
+
+	return transaction, nil
+}
+
 func CreateTransactions(transaction models.Transaction) (int64, error) {
 	sqlQuery := `INSERT INTO transactions (projectid, description, amount, date) values (?, ?, ?, ?)`
 	result, err := db.Exec(sqlQuery, transaction.ProjectId, transaction.Description, transaction.Amount, transaction.Date)
