@@ -35,19 +35,21 @@ export function GeneralSettings() {
 
             <div class="p-6">
                 <div class="flex flex-col gap-6">
-                    <label>
-                        Light Mode
+                    <div class={"flex items-center gap-2"}>
                         <input
                             type="checkbox"
                             checked={lightMode()}
                             placeholder="Home Lab"
-                            class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-accent/20"
+                            class="rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-accent/20"
                             onInput={(event) => {
                                 setLightMode(event.currentTarget.checked)
                                 document.documentElement.classList.toggle("dark", lightMode());
                             }}
                         />
-                    </label>
+                        <label class={"flex"}>
+                            Light Mode
+                        </label>
+                    </div>
                 </div>
             </div>
         </section>

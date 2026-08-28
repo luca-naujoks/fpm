@@ -33,15 +33,15 @@ declare module "virtual:file-routes" {
   /** The flat route manifest, in scan order. */
   const routes: readonly [
     {
-      path: "/home";
-      page: true;
-      $component: FileRouteLazyRef<typeof import("./src/routes/home")>;
-      $$route?: undefined;
-    },
-    {
       path: "/settings";
       page: true;
       $component: FileRouteLazyRef<typeof import("./src/routes/settings")>;
+      $$route?: undefined;
+    },
+    {
+      path: "/home";
+      page: true;
+      $component: FileRouteLazyRef<typeof import("./src/routes/home")>;
       $$route?: undefined;
     },
     {

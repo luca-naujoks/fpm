@@ -1,5 +1,6 @@
 import {createMemo, createSignal} from "solid-js";
 import {ITransaction} from "../../interfaces";
+import {toast} from "../simple-toast/toaster";
 
 export interface ITransactionProps {
     open: boolean,
@@ -27,7 +28,7 @@ export function CreateTransaction(props: ITransactionProps) {
             body: JSON.stringify(body)
         })
         if (!response.ok) {
-            // TODO: add Error Notification
+            toast.error("Error Creating Transaction")
             return
         }
         props.toggle()

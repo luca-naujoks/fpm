@@ -1,5 +1,6 @@
 import {createMemo, createSignal} from "solid-js";
 import {IProjectSettings} from "../../interfaces";
+import {toast} from "../simple-toast/toaster";
 
 export function CreateProject(props: { open: boolean, toggle: () => void }) {
     const [title, setTitle] = createSignal<string>("")
@@ -17,7 +18,7 @@ export function CreateProject(props: { open: boolean, toggle: () => void }) {
         }
         const response = await fetch("/api/project", {method: "POST", body: JSON.stringify(body)})
         if (!response.ok) {
-            // TODO: add Error Notification
+            toast.error("Creating project")
             return
         }
         props.toggle()

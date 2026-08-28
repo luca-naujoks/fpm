@@ -8,7 +8,6 @@ A simple virtual budget-management app for tracking project finances. Built with
 - minimal Resource footprintÏ
 - approximately 10.8MB in size
 
-
 ## Key Features
 
 - **Project Management** — Create and manage multiple budget projects

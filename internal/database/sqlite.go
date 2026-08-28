@@ -71,6 +71,7 @@ func InitDatabaseTables() error {
 		fmt.Println("Database not jet Initialized")
 		return errors.New("database not jet Initialized")
 	}
+
 	sqlStatements :=
 		[]string{
 			`CREATE TABLE IF NOT EXISTS projects (

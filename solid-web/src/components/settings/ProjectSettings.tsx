@@ -1,8 +1,9 @@
 import {IProject, IProjectSettings, ITransaction} from "../../interfaces";
 import {createEffect, createMemo, createSignal, Loading} from "solid-js";
+import {toast} from "../simple-toast/toaster";
 
-export function ProjectSettings(props: { project: IProject }) {
-    const project = createMemo<IProject>(() => props.project)
+export function ProjectSettings(props: { project: IProject, refetch: () => void }) {
+    const project = createMemo(() => props.project);
 
 
     return (
@@ -28,8 +29,8 @@ export function ProjectSettings(props: { project: IProject }) {
             </header>
 
             <div class="p-6">
-                <div class="flex flex-col gap-6">
-                    <ProjectDetails project={project()}/>
+                <div class="flex flex-col">
+                    <ProjectDetails project={project()} refetch={props.refetch}/>
                     <TransactionSection projectId={project().id}/>
                     <DangerZone projectId={project().id}/>
                 </div>
@@ -39,7 +40,7 @@ export function ProjectSettings(props: { project: IProject }) {
     );
 }
 
-function ProjectDetails(props: { project: IProject }) {
+function ProjectDetails(props: { project: IProject, refetch: () => void }) {
     const project = createMemo<IProject>(() => props.project)
 
     const [title, setTitle] = createSignal<string>("");
@@ -76,10 +77,11 @@ function ProjectDetails(props: { project: IProject }) {
         });
 
         if (!response.ok) {
+            toast.error("Updating Project")
             return;
         }
-
-        // TODO: feedback / refresh
+        props.refetch()
+        toast.success("Project Updated Successfully")
     }
 
     return (
@@ -200,16 +202,16 @@ function TransactionSection(props: { projectId: number }) {
             );
 
             if (!response.ok) {
-                // TODO: add Error MEssage
+                toast.error("Request for importing Transactions")
                 return;
             }
 
             setImportFile(undefined);
             fileInput.value = "";
 
-            // TODO: feedback / refresh
+            toast.success("Successfully imported Transactions")
         } catch {
-            // TODO: error feedback
+            toast.error("Failed to Import Transactions")
         }
     }
 
@@ -243,7 +245,7 @@ function TransactionSection(props: { projectId: number }) {
 
             URL.revokeObjectURL(url);
         } catch {
-            // TODO: error feedback
+            toast.error("Transaction Export Failed")
         }
     }
 
@@ -272,24 +274,20 @@ function TransactionSection(props: { projectId: number }) {
                     {transactions()?.length ?? 0} transactions
                 </span>
             </div>
-
-            <div
-                class="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-background p-4 sm:flex-row sm:items-end">
-                <label class="min-w-0 flex-1">
-                    <span class="mb-2 block text-xs font-medium text-foreground/60">
-                        JSON file
-                    </span>
-
+            <div class={"flex flex-col gap-4"}>
+                <label for={"file-upload"} class={"flex flex-col items-center"}>
                     <input
                         ref={fileInput}
                         type="file"
                         accept=".json,application/json"
-                        class="block min-w-0 w-full max-w-full cursor-pointer rounded-md border border-border bg-surface text-sm file:mr-3 file:border-0 file:bg-accent file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-accent/90"
+                        class={[
+                            "file:mr-3 file:border-0 file:bg-accent file:rounded-l-md file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-accent/90 file:cursor-pointer",
+                            "block min-w-0 w-full mb-8 max-w-full rounded-md border border-border bg-background text-sm cursor-pointer"
+                        ]}
                         onChange={onFileChange}
                     />
                 </label>
-
-                <div class="flex shrink-0 gap-2">
+                <div id={"upload-controls"} class={"flex gap-4 justify-start"}>
                     <button
                         type="button"
                         class="rounded-md border border-border px-4 py-2 text-sm font-medium transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
@@ -327,10 +325,11 @@ function DangerZone(props: { projectId: number }) {
         );
 
         if (!response.ok) {
+            toast.error("Error deleting Project")
             return;
         }
 
-        // TODO: refresh projects
+        toast.success("Deleted Project")
     }
 
     return (

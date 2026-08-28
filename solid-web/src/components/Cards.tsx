@@ -45,11 +45,17 @@ export function NumberCard(props: INumberCard) {
             </div>
 
             <div class="mt-6 flex items-baseline gap-1">
-                <span class="text-4xl font-semibold tracking-tight text-accent">
-                    {props.value.toFixed(2)}
-                </span>
 
+
+                <Show when={!props.currency}>
+                    <span class="text-4xl font-semibold tracking-tight text-accent">
+                        {props.value}
+                    </span>
+                </Show>
                 <Show when={props.currency}>
+                    <span class="text-4xl font-semibold tracking-tight text-accent">
+                        {props.value.toFixed(2)}
+                    </span>
                     <span class="text-xl font-medium text-accent/60">
                         €
                     </span>

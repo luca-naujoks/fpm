@@ -3,17 +3,23 @@ import {createMemo, createSignal, For, Loading, Match, Switch} from "solid-js";
 import {GeneralSettings} from "../components/settings/GeneralSettings";
 import {ProjectSettings} from "../components/settings/ProjectSettings";
 import {NavButton} from "../components/settings/NavButton";
+import {toast} from "../components/simple-toast/toaster";
 
-// TODO: add Save/ Update Feedback
 export default function Settings() {
     const [selectedProjectId, setSelectedProjectId] = createSignal<number>(0);
+    const [projectRefresh, setProjectRefresh] = createSignal<number>(0)
 
-    const projects = createMemo(() => fetchProjects());
+    const projects = createMemo(() => {
+        projectRefresh()
+
+        return fetchProjects()
+    });
     const selectedProject = createMemo(() => findProjectById());
 
     async function fetchProjects(): Promise<IProject[]> {
         const response = await fetch("/api/projects");
         if (!response.ok) {
+            toast.error("Error fetching Projects")
             return [];
         }
         return response.json();
@@ -27,6 +33,10 @@ export default function Settings() {
 
     function selectGeneralSettings() {
         setSelectedProjectId(0)
+    }
+
+    function refresh(): void {
+        setProjectRefresh(v => v + 1)
     }
 
     return (
@@ -56,10 +66,9 @@ export default function Settings() {
                     <Switch>
                         <Match when={!selectedProject()}>
                             <GeneralSettings/>
-
                         </Match>
                         <Match when={selectedProject()}>
-                            {(project) => <ProjectSettings project={project()}/>}
+                            {(project) => <ProjectSettings project={project()} refetch={refresh}/>}
                         </Match>
                     </Switch>
                 </div>

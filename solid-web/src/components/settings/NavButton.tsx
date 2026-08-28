@@ -15,7 +15,7 @@ export function NavButton(props: {
             </div>
 
             <div class={`mt-0.5 truncate text-xs text-foreground/40`}>
-                #{props.project.id}
+                # {props.project.description}
             </div>
         </button>
     )

@@ -50,4 +50,6 @@ func main() {
 		fmt.Printf("Server Exited with error: %s", err.Error())
 		return
 	}
+
+	//TODO: add Cleanup logic idk for db and sceduler just kill the http listen
 }

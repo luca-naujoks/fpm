@@ -3,6 +3,7 @@ import {createMemo, createSignal, For} from "solid-js";
 import {IProject, ITransaction} from "../interfaces";
 import {CreateTransaction} from "../components/models/createTransaction";
 import {UpdateTransaction} from "../components/models/updateTransaction";
+import {toast} from "../components/simple-toast/toaster";
 
 export default function Project() {
     const params = useParams()
@@ -16,7 +17,7 @@ export default function Project() {
     async function fetchProject(id: string): Promise<IProject> {
         const response = await fetch(`/api/project/${id}`)
         if (!response.ok) {
-            //TODO: Some Error Message Display
+            toast.error("Error Fetching Project")
             return {} as IProject
         }
         return response.json()
@@ -25,7 +26,7 @@ export default function Project() {
     async function fetchTransactions(id: string): Promise<ITransaction[]> {
         const response = await fetch(`/api/project/${id}/transactions`)
         if (!response.ok) {
-            //TODO: Some Error Message Display
+            toast.error("Error Fetching Transactions")
             return []
         }
         return response.json()

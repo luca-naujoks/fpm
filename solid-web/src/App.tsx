@@ -1,6 +1,7 @@
 import {createEffect, createSignal, Loading} from 'solid-js';
 import './App.css';
 import {Router} from "./router";
+import {Toaster} from "./components/simple-toast/toaster";
 
 export default function App() {
     const [dark] = createSignal(false);
@@ -24,6 +25,7 @@ export default function App() {
                     </nav>
                     <div class={"w-2/3 max-h-full"}>
                         <Loading>
+                            <Toaster/>
                             <main class={"overflow-x-hidden"}>
                                 {props.children}
                             </main>
