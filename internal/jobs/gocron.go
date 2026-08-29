@@ -9,7 +9,7 @@ import (
 	"github.com/go-co-op/gocron/v2"
 )
 
-func NewScheduler() {
+func NewScheduler(db database.Database) {
 	schedule, err := gocron.NewScheduler()
 	if err != nil {
 		errorMessage := fmt.Sprintf("[Job Scheduler] Failed to Init New Scheduler\n %v", err)
@@ -24,16 +24,16 @@ func NewScheduler() {
 			),
 		),
 		gocron.NewTask(func() {
-			monthlyPayIn()
+			monthlyPayIn(db)
 		}),
 	)
 
 	schedule.Start()
 }
 
-func monthlyPayIn() {
+func monthlyPayIn(db database.Database) {
 	fmt.Println("[Scheduled Job] Starting Monthly Pay In")
-	projects, err := database.GetProjects()
+	projects, err := db.GetProjects()
 	if err != nil {
 		errorMessage := fmt.Sprintf("[Scheduled Job] failed to access projects from database\n %v", err)
 		fmt.Println(errorMessage)
@@ -47,7 +47,7 @@ func monthlyPayIn() {
 			Amount:      float64(project.Budget),
 			Date:        time.Now(),
 		}
-		_, err := database.CreateTransactions(transaction)
+		_, err := db.CreateTransactions(transaction)
 		if err != nil {
 			errorMessage := fmt.Sprintf("[Scheduled Job] failed to create Monthly Transaction\n %v", err)
 			fmt.Println(errorMessage)

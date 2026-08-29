@@ -6,6 +6,7 @@ export interface ITransactionProps {
     open: boolean,
     toggle: () => void,
     projectId: number
+    refetch: () => void
 }
 
 export function CreateTransaction(props: ITransactionProps) {
@@ -31,6 +32,8 @@ export function CreateTransaction(props: ITransactionProps) {
             toast.error("Error Creating Transaction")
             return
         }
+
+        props.refetch()
         props.toggle()
     }
 

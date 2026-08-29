@@ -78,10 +78,6 @@
 }
 
 .nav {
-    a {
-        @apply cursor-pointer
-    }
-
     @apply flex gap-4 w-fit bg-surface rounded-full p-4 mt-4
 }
 

@@ -3,6 +3,7 @@ export interface IProject {
     title: string
     description: string
     budget: number
+    pinned: boolean
     available_budget: number
     last_transaction: ITransaction
 }
@@ -12,6 +13,7 @@ export interface IProjectSettings {
     title: string
     description: string
     budget: number
+    pinned: boolean
 }
 
 export interface ITransaction {

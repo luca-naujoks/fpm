@@ -1,11 +1,13 @@
-package database
+package sqlite
 
 import (
 	"database/sql"
 	"financial-planner/internal/models"
+
+	"github.com/ncruces/go-sqlite3"
 )
 
-func GetTotalSpend() (float64, error) {
+func (db *SqliteDB) GetTotalSpend() (float64, error) {
 	var sum sql.NullFloat64
 	sqlQuery := `SELECT SUM(amount) FROM transactions WHERE amount < 0`
 
@@ -18,7 +20,7 @@ func GetTotalSpend() (float64, error) {
 
 	return sum.Float64, nil
 }
-func GetProjectTransactions(projectId int) ([]models.Transaction, error) {
+func (db *SqliteDB) GetProjectTransactions(projectId int) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	transactions = []models.Transaction{}
 	sqlQuery := `SELECT id, projectId, description, amount, date FROM transactions WHERE projectId = ? ORDER BY date DESC`
@@ -31,7 +33,12 @@ func GetProjectTransactions(projectId int) ([]models.Transaction, error) {
 
 	for rows.Next() {
 		transaction := &models.Transaction{}
-		err := rows.Scan(&transaction.Id, &transaction.ProjectId, &transaction.Description, &transaction.Amount, &transaction.Date)
+		err := rows.Scan(
+			&transaction.Id,
+			&transaction.ProjectId,
+			&transaction.Description,
+			&transaction.Amount,
+			sqlite3.TimeFormatDefault.Scanner(&transaction.Date))
 		if err != nil {
 			return nil, err
 		}
@@ -44,12 +51,18 @@ func GetProjectTransactions(projectId int) ([]models.Transaction, error) {
 	return transactions, nil
 }
 
-func GetLastTransaction(projectId int) (models.Transaction, error) {
+func (db *SqliteDB) GetLastTransaction(projectId int) (models.Transaction, error) {
 	var transaction models.Transaction
 	sqlQuery := `SELECT id, projectId, description, amount, date FROM transactions WHERE projectId = ? ORDER BY date DESC LIMIT 1`
 
 	row := db.QueryRow(sqlQuery, projectId)
-	err := row.Scan(&transaction.Id, &transaction.ProjectId, &transaction.Description, &transaction.Amount, &transaction.Date)
+	err := row.Scan(
+		&transaction.Id,
+		&transaction.ProjectId,
+		&transaction.Description,
+		&transaction.Amount,
+		sqlite3.TimeFormatDefault.Scanner(&transaction.Date),
+	)
 	if err != nil {
 		return models.Transaction{}, err
 	}
@@ -57,7 +70,7 @@ func GetLastTransaction(projectId int) (models.Transaction, error) {
 	return transaction, nil
 }
 
-func CreateTransactions(transaction models.Transaction) (int64, error) {
+func (db *SqliteDB) CreateTransactions(transaction models.Transaction) (int64, error) {
 	sqlQuery := `INSERT INTO transactions (projectid, description, amount, date) values (?, ?, ?, ?)`
 	result, err := db.Exec(sqlQuery, transaction.ProjectId, transaction.Description, transaction.Amount, transaction.Date)
 	if err != nil {
@@ -72,7 +85,7 @@ func CreateTransactions(transaction models.Transaction) (int64, error) {
 	return transactionId, nil
 }
 
-func UpdateTransactions(transaction models.Transaction) (int64, error) {
+func (db *SqliteDB) UpdateTransactions(transaction models.Transaction) (int64, error) {
 	sqlQuery := `UPDATE transactions SET description = ?, amount = ?, date = ? WHERE id = ?`
 	result, err := db.Exec(sqlQuery, transaction.Description, transaction.Amount, transaction.Date, transaction.Id)
 	if err != nil {
@@ -86,7 +99,7 @@ func UpdateTransactions(transaction models.Transaction) (int64, error) {
 	return projectId, nil
 }
 
-func DeleteTransactions(transactionId int) (removedTransactions int64, err error) {
+func (db *SqliteDB) DeleteTransactions(transactionId int) (removedTransactions int64, err error) {
 	sqlQueryTransaction := `DELETE FROM transactions WHERE id = ?`
 
 	// First Delete Transactions

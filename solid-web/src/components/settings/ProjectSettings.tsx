@@ -32,7 +32,7 @@ export function ProjectSettings(props: { project: IProject, refetch: () => void 
                 <div class="flex flex-col">
                     <ProjectDetails project={project()} refetch={props.refetch}/>
                     <TransactionSection projectId={project().id}/>
-                    <DangerZone projectId={project().id}/>
+                    <DangerZone projectId={project().id} refresh={props.refetch}/>
                 </div>
             </div>
         </section>
@@ -46,6 +46,7 @@ function ProjectDetails(props: { project: IProject, refetch: () => void }) {
     const [title, setTitle] = createSignal<string>("");
     const [description, setDescription] = createSignal<string>("");
     const [budget, setBudget] = createSignal<string>("");
+    const [pinned, setPinned] = createSignal<boolean>(false)
     const budgetAsNumber = createMemo(() => Number(budget()));
 
     const hasChanges = createMemo(() =>
@@ -60,6 +61,7 @@ function ProjectDetails(props: { project: IProject, refetch: () => void }) {
             setTitle(project.title);
             setDescription(project.description)
             setBudget(project.budget.toString())
+            setPinned(project.pinned)
         }
     )
 
@@ -69,9 +71,10 @@ function ProjectDetails(props: { project: IProject, refetch: () => void }) {
             title: title(),
             description: description(),
             budget: budgetAsNumber(),
+            pinned: pinned()
         };
 
-        const response = await fetch("/api/project", {
+        const response = await fetch(`/api/project/${project().id}`, {
             method: "PUT",
             body: JSON.stringify(body),
         });
@@ -307,9 +310,8 @@ function TransactionSection(props: { projectId: number }) {
     )
 }
 
-function DangerZone(props: { projectId: number }) {
+function DangerZone(props: { projectId: number, refresh: () => void }) {
     const [deleteButtonText, setDeleteButtonText] = createSignal<string>("Delete Project");
-
 
     async function deleteProject() {
         if (deleteButtonText() === "Delete Project") {
@@ -318,7 +320,7 @@ function DangerZone(props: { projectId: number }) {
         }
 
         const response = await fetch(
-            `/api/project?project_id=${props.projectId}`,
+            `/api/project/${props.projectId}`,
             {
                 method: "DELETE",
             }
@@ -330,6 +332,7 @@ function DangerZone(props: { projectId: number }) {
         }
 
         toast.success("Deleted Project")
+        props.refresh()
     }
 
     return (

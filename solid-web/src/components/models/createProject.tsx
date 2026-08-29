@@ -2,7 +2,7 @@ import {createMemo, createSignal} from "solid-js";
 import {IProjectSettings} from "../../interfaces";
 import {toast} from "../simple-toast/toaster";
 
-export function CreateProject(props: { open: boolean, toggle: () => void }) {
+export function CreateProject(props: { open: boolean, toggle: () => void, refresh: () => void }) {
     const [title, setTitle] = createSignal<string>("")
     const [description, setDescription] = createSignal<string>("")
     const [budget, setBudget] = createSignal<string>("20")
@@ -15,12 +15,15 @@ export function CreateProject(props: { open: boolean, toggle: () => void }) {
             title: title(),
             description: description(),
             budget: budgetAsNumber(),
+            pinned: false
         }
         const response = await fetch("/api/project", {method: "POST", body: JSON.stringify(body)})
         if (!response.ok) {
             toast.error("Creating project")
             return
         }
+
+        props.refresh()
         props.toggle()
     }
 

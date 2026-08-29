@@ -6,6 +6,7 @@ export interface ITransactionProps {
     open: boolean,
     toggle: () => void,
     transaction: ITransaction | null
+    refetch: () => void
 }
 
 export function UpdateTransaction(props: ITransactionProps) {
@@ -48,6 +49,8 @@ export function UpdateTransaction(props: ITransactionProps) {
             toast.error("Error Updating Transaction")
             return
         }
+
+        props.refetch()
         props.toggle()
     }
 

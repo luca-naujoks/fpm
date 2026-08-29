@@ -12,7 +12,13 @@ export default function Project() {
     const [selectedTransaction, setSelectedTransaction] = createSignal<ITransaction | null>(null)
 
     const project = createMemo(() => fetchProject(String(params.id)))
-    const transactions = createMemo(() => fetchTransactions(String(params.id)))
+
+    const [transactionRefetch, setTransactionRefetch] = createSignal<boolean>(false)
+    const transactions = createMemo(() => {
+        transactionRefetch()
+
+        return fetchTransactions(String(params.id))
+    })
 
     async function fetchProject(id: string): Promise<IProject> {
         const response = await fetch(`/api/project/${id}`)
@@ -44,14 +50,19 @@ export default function Project() {
         setSelectedTransaction(transaction)
     }
 
+    function refetchTransactions() {
+        setTransactionRefetch((prev) => !prev)
+    }
+
     return (
         <main class={"card mt-4"}>
-            <CreateTransaction open={transactionModalOpen()} toggle={toggleTransactionModal} projectId={project().id}/>
+            <CreateTransaction open={transactionModalOpen()} toggle={toggleTransactionModal} projectId={project().id}
+                               refetch={refetchTransactions}/>
             <UpdateTransaction open={selectedTransaction() != null} toggle={closeUpdateModal}
-                               transaction={selectedTransaction()}/>
+                               transaction={selectedTransaction()} refetch={refetchTransactions}/>
             <header class="px-6 py-5">
                 <div class="flex items-center justify-between gap-4">
-                    <div class="min-w-0">
+                    <div class="text-start">
                         <div class="flex items-center gap-4">
                             <h2 class="mb-0 truncate text-xl font-semibold">
                                 {project().title}
@@ -62,9 +73,9 @@ export default function Project() {
                             </span>
                         </div>
 
-                        <p class="mb-0 px-0 mt-1 text-sm text-foreground/50">
+                        <span class="mt-1 text-sm text-foreground/50">
                             {project().description || "No description"}
-                        </p>
+                        </span>
                     </div>
                 </div>
                 <div class={"flex justify-between items-center"}>

@@ -7,7 +7,13 @@ export default function Home() {
     const [projectFormOpen, setProjectFormOpen] = createSignal<boolean>(false)
 
     const spendBudget = createMemo(() => fetchTotalSpendBudget())
-    const projects = createMemo(() => fetchProjects());
+
+    const [projectRefresh, setProjectRefresh] = createSignal<boolean>(false)
+    const projects = createMemo(() => {
+        projectRefresh()
+        return fetchProjects()
+    });
+
     const projectBudget = createMemo(() => calculateTotalProjectBudget())
     const availableBudget = createMemo(() => calculateTotalAvailableBudget())
 
@@ -48,9 +54,13 @@ export default function Home() {
         setProjectFormOpen(!projectFormOpen)
     }
 
+    function refreshProjects() {
+        setProjectRefresh((prev) => !prev)
+    }
+
     return (
         <main class="w-full flex flex-col items-start pt-12">
-            <CreateProject open={projectFormOpen()} toggle={toggleProjectFormOpen}/>
+            <CreateProject open={projectFormOpen()} toggle={toggleProjectFormOpen} refresh={refreshProjects}/>
             <h2>Overview</h2>
             <div class={"w-full grid grid-cols-4 gap-4 mb-8"}>
                 <Loading fallback={<SkeletonCard/>}>
@@ -69,7 +79,9 @@ export default function Home() {
             <h2>Projects</h2>
             <div class={"w-full grid grid-cols-3 xl:grid-cols-4 gap-4 mb-8"}>
                 <Loading fallback={<SkeletonCard class={"min-h-80"}/>}>
-                    <For each={projects()} fallback={<div>No items</div>}>
+                    <For each={projects()} fallback={
+                        <div class={"col-span-4"}>No Current Projects</div>
+                    }>
                         {(item) => <ProjectCard project={item}/>}
                     </For>
                     <EmptyProjectCard open={() => setProjectFormOpen(true)}/>

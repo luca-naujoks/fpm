@@ -2,13 +2,12 @@ package api
 
 import (
 	"encoding/json"
-	"financial-planner/internal/database"
 	"financial-planner/internal/models"
 	"net/http"
 	"strconv"
 )
 
-func GetTransactions(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) GetTransactions(w http.ResponseWriter, r *http.Request) {
 	id := ParsePathParam(r, "id")
 	projectId, err := strconv.Atoi(id)
 	if err != nil {
@@ -16,7 +15,7 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transactions, err := database.GetProjectTransactions(projectId)
+	transactions, err := api.db.GetProjectTransactions(projectId)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
@@ -25,14 +24,14 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, transactions)
 }
 
-func CreateTransaction(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	var transaction models.Transaction
 	err := json.NewDecoder(r.Body).Decode(&transaction)
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err)
 		return
 	}
-	projectID, err := database.CreateTransactions(transaction)
+	projectID, err := api.db.CreateTransactions(transaction)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
@@ -45,14 +44,14 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusCreated, response)
 }
 
-func EditTransaction(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) EditTransaction(w http.ResponseWriter, r *http.Request) {
 	var transaction models.Transaction
 	err := json.NewDecoder(r.Body).Decode(&transaction)
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err)
 		return
 	}
-	transactionId, err := database.UpdateTransactions(transaction)
+	transactionId, err := api.db.UpdateTransactions(transaction)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
@@ -65,7 +64,7 @@ func EditTransaction(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, response)
 }
 
-func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectID, err := ParseIntQuery(r, "transaction_id")
 	if err != nil {
@@ -73,7 +72,7 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deletedTransactions, err := database.DeleteTransactions(projectID)
+	deletedTransactions, err := api.db.DeleteTransactions(projectID)
 
 	response := map[string]int64{
 		"deleted_transactions": deletedTransactions,
@@ -82,7 +81,7 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, response)
 }
 
-func ImportTransactions(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) ImportTransactions(w http.ResponseWriter, r *http.Request) {
 	var importBody models.ImportBody
 	err := json.NewDecoder(r.Body).Decode(&importBody)
 	if err != nil {
@@ -92,7 +91,7 @@ func ImportTransactions(w http.ResponseWriter, r *http.Request) {
 
 	for _, transaction := range importBody.Transactions {
 		transaction.ProjectId = importBody.ProjectId
-		_, err = database.CreateTransactions(transaction)
+		_, err = api.db.CreateTransactions(transaction)
 		if err != nil {
 			respondError(w, http.StatusInternalServerError, err)
 			return
@@ -102,14 +101,14 @@ func ImportTransactions(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func ExportTransactions(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) ExportTransactions(w http.ResponseWriter, r *http.Request) {
 	projectID, err := ParseIntQuery(r, "project_id")
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	transactions, err := database.GetProjectTransactions(projectID)
+	transactions, err := api.db.GetProjectTransactions(projectID)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return

@@ -3,14 +3,13 @@ package api
 import (
 	"encoding/json"
 	"errors"
-	"financial-planner/internal/database"
 	"financial-planner/internal/models"
 	"fmt"
 	"net/http"
 	"strconv"
 )
 
-func GetProject(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) GetProject(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 
 	projectId, err := strconv.Atoi(id)
@@ -19,7 +18,7 @@ func GetProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	project, err := database.GetProject(projectId)
+	project, err := api.db.GetProject(projectId)
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err)
 		return
@@ -27,8 +26,8 @@ func GetProject(w http.ResponseWriter, r *http.Request) {
 
 	respondJSON(w, http.StatusOK, project)
 }
-func GetProjectSpend(w http.ResponseWriter, r *http.Request) {
-	budget, err := database.GetTotalSpend()
+func (api *WebHandlers) GetProjectSpend(w http.ResponseWriter, r *http.Request) {
+	budget, err := api.db.GetTotalSpend()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error: %s", err.Error()), http.StatusBadRequest)
 		return
@@ -40,10 +39,8 @@ func GetProjectSpend(w http.ResponseWriter, r *http.Request) {
 
 	respondJSON(w, http.StatusOK, response)
 }
-func GetProjects(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	projects, err := database.GetProjects()
+func (api *WebHandlers) GetProjects(w http.ResponseWriter, r *http.Request) {
+	projects, err := api.db.GetProjects()
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
@@ -52,7 +49,7 @@ func GetProjects(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, projects)
 }
 
-func CreateProject(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) CreateProject(w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 	if err != nil {
@@ -65,7 +62,7 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	projectID, err := database.CreateProject(project)
+	projectID, err := api.db.CreateProject(project)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
@@ -76,14 +73,14 @@ func CreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 	respondJSON(w, http.StatusCreated, response)
 }
-func EditProject(w http.ResponseWriter, r *http.Request) {
+func (api *WebHandlers) EditProject(w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 	err := json.NewDecoder(r.Body).Decode(&project)
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err)
 		return
 	}
-	projectID, err := database.UpdateProject(project)
+	projectID, err := api.db.UpdateProject(project)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
@@ -94,21 +91,47 @@ func EditProject(w http.ResponseWriter, r *http.Request) {
 	}
 	respondJSON(w, http.StatusOK, response)
 }
-func DeleteProject(w http.ResponseWriter, r *http.Request) {
-	projectID, err := ParseIntQuery(r, "project_id")
+func (api *WebHandlers) DeleteProject(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	projectId, err := strconv.Atoi(id)
 	if err != nil {
 		respondError(w, http.StatusBadRequest, err)
 		return
 	}
-	err = database.DeleteProject(projectID)
+
+	err = api.db.DeleteProject(projectId)
 	if err != nil {
 		respondError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	response := map[string]int{
-		"deletedProject": projectID,
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (api *WebHandlers) GetPinnedProjects(w http.ResponseWriter, r *http.Request) {
+	projects, err := api.db.GetPinnedProjects()
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, err)
+		return
 	}
 
-	respondJSON(w, http.StatusOK, response)
+	respondJSON(w, http.StatusOK, projects)
+}
+
+func (api *WebHandlers) TogglePinnedProject(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	projectId, err := strconv.Atoi(id)
+	if err != nil {
+		respondError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	err = api.db.TogglePinnedProject(projectId)
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -8,6 +8,8 @@ export default defineConfig({
     plugins: [
         solid({
             start: true,
+            serverFunctions: false,
+            ssr: false,
             extensions: ['.jsx', '.tsx']
         }),
         fileRoutes({types: true}),
