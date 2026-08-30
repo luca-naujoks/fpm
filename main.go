@@ -19,7 +19,7 @@ import (
 //go:embed solid-web/dist/client
 var embeddedContent embed.FS
 
-var databasePath = "./db/sqlite3_old.db"
+var databasePath = "./db/sqlite3.db"
 
 func main() {
 	err := migrations.MigrationCheck(databasePath)

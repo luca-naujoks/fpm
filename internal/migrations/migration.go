@@ -24,7 +24,10 @@ type MigrationEntry struct {
 }
 
 func MigrationCheck(dsn string) error {
+	var openMigrations []os.DirEntry
+
 	fmt.Println("Running Migration Check")
+
 	migrations, err := os.ReadDir(migrationsPath)
 	if err != nil {
 		return err
@@ -37,17 +40,15 @@ func MigrationCheck(dsn string) error {
 	defer migrationRunner.db.Close()
 
 	for _, migration := range migrations {
-		// Checks to verify we only get migration (.sql) files
-		if !strings.HasSuffix(migration.Name(), ".sql") {
-			continue
-		}
 		if migration.IsDir() {
 			continue
 		}
 
-		name := strings.ReplaceAll(migration.Name(), ".sql", "")
+		if !strings.HasSuffix(migration.Name(), ".sql") {
+			continue
+		}
 
-		status, err := migrationRunner.isMigrationNeeded(name)
+		status, err := migrationRunner.isMigrationNeeded(strings.ReplaceAll(migration.Name(), ".sql", ""))
 		if err != nil {
 			return err
 		}
@@ -57,9 +58,17 @@ func MigrationCheck(dsn string) error {
 			continue
 		}
 
-		// Current State: There is a Migration that was not yet applied
+		openMigrations = append(openMigrations, migration)
+	}
+
+	fmt.Printf("Found %v open Migrations to apply\n", len(openMigrations))
+
+	for _, entry := range openMigrations {
+		name := strings.ReplaceAll(entry.Name(), ".sql", "")
+
 		fmt.Printf("Executing Migration: %s\n", name)
-		migrationPath := path.Join(migrationsPath, migration.Name())
+
+		migrationPath := path.Join(migrationsPath, entry.Name())
 		err = migrationRunner.executeMigration(name, migrationPath)
 		if err != nil {
 			return err
