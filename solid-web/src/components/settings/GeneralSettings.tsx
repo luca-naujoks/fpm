@@ -1,9 +1,16 @@
 import {createMemo, createSignal, Show} from "solid-js";
+import {getLightModeFromLocalStorage} from "../../utils/lightMode";
 
 export function GeneralSettings() {
-    const [lightMode, setLightMode] = createSignal<boolean>(true)
+    const [lightMode, setLightMode] = createSignal<boolean>(getLightModeFromLocalStorage)
 
     const hasChanges = createMemo(() => false);
+
+    function handleLightModeToggle(currentState: boolean) {
+        setLightMode(!currentState)
+        document.documentElement.classList.toggle("dark", lightMode());
+        localStorage.setItem("light_mode", String(!currentState))
+    }
 
     return (
         <section class="rounded-xl border border-border bg-surface col-span-3">
@@ -41,10 +48,7 @@ export function GeneralSettings() {
                             checked={lightMode()}
                             placeholder="Home Lab"
                             class="rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-accent/20"
-                            onInput={(event) => {
-                                setLightMode(event.currentTarget.checked)
-                                document.documentElement.classList.toggle("dark", lightMode());
-                            }}
+                            onInput={() => handleLightModeToggle(lightMode())}
                         />
                         <label class={"flex"}>
                             Light Mode

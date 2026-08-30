@@ -1,7 +1,7 @@
 import {IProject, IProjectSettings, ITransaction} from "../../interfaces";
 import {createEffect, createMemo, createSignal, Loading} from "solid-js";
-import {toast} from "../simple-toast/toaster";
-import {navigationBar} from "../simple-nav/nav-bar";
+import {toast} from "../../utils/simple-toast/toaster";
+import {navigationBar} from "../../utils/simple-nav/nav-bar";
 
 export function ProjectSettings(props: { project: IProject, refetch: () => void }) {
     const [pinned, setPinned] = createSignal<boolean>(false)

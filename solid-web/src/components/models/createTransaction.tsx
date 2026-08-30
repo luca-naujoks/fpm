@@ -1,6 +1,7 @@
 import {createMemo, createSignal} from "solid-js";
 import {ITransaction} from "../../interfaces";
-import {toast} from "../simple-toast/toaster";
+import {toast} from "../../utils/simple-toast/toaster";
+
 
 export interface ITransactionProps {
     open: boolean,

@@ -1,19 +1,19 @@
 import {createEffect, createSignal, Loading} from 'solid-js';
 import './App.css';
 import {Router} from "./router";
-import {Toaster} from "./components/simple-toast/toaster";
-import {Navigation} from "./components/simple-nav/nav-bar";
+import {getLightModeFromLocalStorage} from "./utils/lightMode";
+import {Navigation} from "./utils/simple-nav/nav-bar";
+import {Toaster} from "./utils/simple-toast/toaster";
 
 export default function App() {
-    const [dark] = createSignal(false);
+    const [light] = createSignal<boolean>(getLightModeFromLocalStorage);
 
     createEffect(
-        () => dark(),
-        (isDark) => {
-            document.documentElement.classList.toggle("dark", isDark);
+        () => light(),
+        (isLight) => {
+            document.documentElement.classList.toggle("dark", !isLight);
         }
     );
-
 
     return (
         <Router>

@@ -3,7 +3,7 @@ import {createMemo, createSignal, For} from "solid-js";
 import {IProject, ITransaction} from "../interfaces";
 import {CreateTransaction} from "../components/models/createTransaction";
 import {UpdateTransaction} from "../components/models/updateTransaction";
-import {toast} from "../components/simple-toast/toaster";
+import {toast} from "../utils/simple-toast/toaster";
 
 export default function Project() {
     const params = useParams()

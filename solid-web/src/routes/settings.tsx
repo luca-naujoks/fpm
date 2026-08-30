@@ -3,7 +3,7 @@ import {createMemo, createSignal, For, Loading, Match, Switch} from "solid-js";
 import {GeneralSettings} from "../components/settings/GeneralSettings";
 import {ProjectSettings} from "../components/settings/ProjectSettings";
 import {NavButton} from "../components/settings/NavButton";
-import {toast} from "../components/simple-toast/toaster";
+import {toast} from "../utils/simple-toast/toaster";
 
 export default function Settings() {
     const [selectedProjectId, setSelectedProjectId] = createSignal<number>(0);

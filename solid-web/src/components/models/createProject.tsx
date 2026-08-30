@@ -1,6 +1,6 @@
 import {createMemo, createSignal} from "solid-js";
 import {IProjectSettings} from "../../interfaces";
-import {toast} from "../simple-toast/toaster";
+import {toast} from "../../utils/simple-toast/toaster";
 
 export function CreateProject(props: { open: boolean, toggle: () => void, refresh: () => void }) {
     const [title, setTitle] = createSignal<string>("")
