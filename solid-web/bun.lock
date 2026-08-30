@@ -7,7 +7,7 @@
       "dependencies": {
         "@solidjs/meta": "^1.0.0-next.2",
         "@solidjs/router": "^2.0.0-next.19",
-        "@solidjs/web": "^2.0.0-rc.0",
+        "@solidjs/web": "^2.0.0-rc.4",
         "solid-js": "^2.0.0-rc.4",
       },
       "devDependencies": {
@@ -535,7 +535,7 @@
 
     "node-releases": ["node-releases@2.0.54", "", {}, "sha512-YHs7BmmcsdAI5Ozuf8JZo6PT0mv2GIWC9vMfvUC3dp65M8hn7Ux8CPL+2oBI7juNuj9d0ndhTcznq2ODBps9cQ=="],
 
-    "nwsapi": ["nwsapi@2.2.26", "", {}, "sha512-LPmrA6J31t9ac9294T/WZV6AK5CUcFZ+VXQ7pNNc1+JAjeKthW7vqekOBu6pXzsxD7slwJ7M4XMhamojG3T4oA=="],
+    "nwsapi": ["nwsapi@2.2.27", "", {}, "sha512-gQPNF78qebCQ6tvVFBYrvJdBNOrYZm90ZlXgpIFm06p6qHDHq/XC4TnJftN6OMbxVE0UTBAoRgcsDeJBBooITw=="],
 
     "obug": ["obug@2.1.4", "", {}, "sha512-4a+OsYv9UktOJKE+l1A4OufDgdRF9PifWj+tJnHURo/P+WOxpG4GzUFL9qCalmWauao6ogiG+QvnCovwPoyAWA=="],
 

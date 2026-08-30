@@ -29,7 +29,7 @@
   "dependencies": {
     "@solidjs/meta": "^1.0.0-next.2",
     "@solidjs/router": "^2.0.0-next.19",
-    "@solidjs/web": "^2.0.0-rc.0",
+    "@solidjs/web": "^2.0.0-rc.4",
     "solid-js": "^2.0.0-rc.4"
   }
 }
