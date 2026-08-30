@@ -2,7 +2,6 @@ import {Show} from "solid-js";
 import {IProject} from "../interfaces";
 import {useNavigate} from "@solidjs/router";
 import {Router} from "../router";
-import {navigation} from "./simple-nav/nav-bar";
 
 interface INumberCard {
     title: string
@@ -69,15 +68,10 @@ export function NumberCard(props: INumberCard) {
 export function ProjectCard(props: { project: IProject }) {
     const navigate = useNavigate()
 
-    function handleProjectNavigation() {
-        navigation.push(`/project/${props.project.id}`, props.project.title)
-        navigate(Router.paths.project(props.project.id), {replace: true})
-    }
-
     return (
         <div
             class="flex flex-col justify-end gap-4 card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
-            onClick={handleProjectNavigation    }>
+            onClick={() => navigate(Router.paths.project(props.project.id), {replace: true})}>
             <div>
                 <span class="text-sm text-foreground/50">
                     {props.project.description}

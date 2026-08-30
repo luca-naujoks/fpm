@@ -62,7 +62,7 @@ export default function Home() {
         <main class="w-full flex flex-col items-start pt-12">
             <CreateProject open={projectFormOpen()} toggle={toggleProjectFormOpen} refresh={refreshProjects}/>
             <h2>Overview</h2>
-            <div class={"w-full grid grid-cols-4 gap-4 mb-8"}>
+            <div class={["w-full flex flex-col gap-4 mb-8", "md:grid md:grid-cols-2", "lg:grid-cols-4"]}>
                 <Loading fallback={<SkeletonCard/>}>
                     <NumberCard title={"Total Budget (Monthly)"} value={projectBudget()} currency={true}/>
                 </Loading>
@@ -77,7 +77,8 @@ export default function Home() {
                 </Loading>
             </div>
             <h2>Projects</h2>
-            <div class={"w-full grid grid-cols-3 xl:grid-cols-4 gap-4 mb-8"}>
+            <div
+                class={["w-full flex flex-col gap-4 mb-8", "md:grid md:grid-cols-2", "lg:grid-cols-3", "xl:grid-cols-4",]}>
                 <Loading fallback={<SkeletonCard class={"min-h-80"}/>}>
                     <For each={projects()} fallback={
                         <div class={"col-span-4"}>No Current Projects</div>

@@ -42,7 +42,7 @@ export default function Settings() {
     return (
         <Loading>
             <main class="w-full mt-4 mb-8">
-                <div class="grid grid-cols-1 grid-rows-1 gap-6 lg:grid-cols-4">
+                <div class="flex flex-col gap-6 lg:grid lg:grid-cols-4">
                     <aside class="rounded-xl border border-border bg-surface">
                         <div class="border-b border-border px-4 py-4">
                             <h3 class="text-sm font-semibold uppercase tracking-wider text-foreground/60">

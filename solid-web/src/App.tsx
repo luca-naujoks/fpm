@@ -21,7 +21,7 @@ export default function App() {
                 <div
                     class={"flex flex-col items-center max-h-screen max-w-screen overflow-x-hidden scrollbar-gutter-both"}>
                     <Navigation/>
-                    <div class={"w-2/3 max-h-full"}>
+                    <div class={"w-4/5 xl:w-2/3"}>
                         <Loading>
                             <Toaster/>
                             <main class={"overflow-x-hidden"}>

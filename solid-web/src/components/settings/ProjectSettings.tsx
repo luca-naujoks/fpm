@@ -1,10 +1,28 @@
 import {IProject, IProjectSettings, ITransaction} from "../../interfaces";
 import {createEffect, createMemo, createSignal, Loading} from "solid-js";
 import {toast} from "../simple-toast/toaster";
+import {navigationBar} from "../simple-nav/nav-bar";
 
 export function ProjectSettings(props: { project: IProject, refetch: () => void }) {
+    const [pinned, setPinned] = createSignal<boolean>(false)
     const project = createMemo(() => props.project);
 
+    createEffect(
+        () => project(),
+        (prj) => {
+            setPinned(prj.pinned)
+        }
+    )
+
+    async function togglePinnedState() {
+        const response = await fetch(`/api/project/${project().id}/pin`, {method: "PUT"})
+        if (!response.ok) {
+            toast.error(`Failed to ${pinned() ? "Unpin Project" : "Pin Project"}`)
+        }
+
+        setPinned((prev) => !prev)
+        navigationBar.refresh()
+    }
 
     return (
         <section class="rounded-xl border border-border bg-surface col-span-3">
@@ -20,11 +38,12 @@ export function ProjectSettings(props: { project: IProject, refetch: () => void 
                                 #{project().id}
                             </span>
                         </div>
-
                         <span class="mt-1 text-sm text-foreground/50">
                             {project().description}
                         </span>
                     </div>
+                    <button class={"button w-32"}
+                            onClick={togglePinnedState}>{pinned() ? "Unpin Project" : "Pin Project"}</button>
                 </div>
             </header>
 

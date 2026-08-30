@@ -55,7 +55,7 @@ export default function Project() {
     }
 
     return (
-        <main class={"card mt-4"}>
+        <main class={"card mt-4 mb-4"}>
             <CreateTransaction open={transactionModalOpen()} toggle={toggleTransactionModal} projectId={project().id}
                                refetch={refetchTransactions}/>
             <UpdateTransaction open={selectedTransaction() != null} toggle={closeUpdateModal}
