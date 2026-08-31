@@ -36,7 +36,7 @@ jobs:
         run: go mod verify
 
       - name: Build
-        run: go build ldflags="-s -w" -o main .
+        run: go build -ldflags="-s -w" -o main .
 
       - name: Run tests
         run: go test -race -vet=off ./...
