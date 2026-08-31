@@ -13,6 +13,7 @@ export function EmptyProjectCard(props: { open: () => void }) {
     return (
         <div
             class="flex items-center justify-center card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+            data-testid={"new_project_card"}
             onClick={() => props.open()}
         >
             <div class="text-center">
@@ -31,7 +32,9 @@ export function EmptyProjectCard(props: { open: () => void }) {
 export function NumberCard(props: INumberCard) {
     return (
         <div
-            class="flex h-full w-full flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-sm">
+            class="flex h-full w-full flex-col justify-between rounded-xl border border-border bg-surface p-5 shadow-sm"
+            data-testid={"number_card"}
+        >
             <div class="flex items-start justify-between gap-4">
                 <span class="text-sm font-medium text-foreground/50">
                     {props.title}
@@ -71,6 +74,7 @@ export function ProjectCard(props: { project: IProject }) {
     return (
         <div
             class="flex flex-col justify-end gap-4 card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+            data-testid={"project_card"}
             onClick={() => navigate(Router.paths.project(props.project.id), {replace: true})}>
             <div>
                 <span class="text-sm text-foreground/50">

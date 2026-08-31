@@ -32,8 +32,9 @@ export function Navigation() {
 
 
     return (
-        <nav class={"nav"}>
-            <a href={Router.paths()} class={location.pathname == "/" ? "text-accent/50 cursor-default" : ""}>Home</a>
+        <nav class={"nav"} data-testid={"nav_bar"}>
+            <a href={Router.paths()} class={location.pathname == "/" ? "text-accent/50 cursor-default" : ""}
+               data-testid={"nav_home"}>Home</a>
             <span class={"w-1 border-l-2 border-border"}/>
             <Show when={pinnedProjects().length > 0}>
                 <>
@@ -46,7 +47,8 @@ export function Navigation() {
                 </>
             </Show>
             <a href={Router.paths.settings}
-               class={location.pathname == "/settings" ? "text-accent/50 cursor-default" : ""}>Settings</a>
+               class={location.pathname == "/settings" ? "text-accent/50 cursor-default" : ""}
+               data-testid={"nav_settings"}>Settings</a>
         </nav>
     )
 }

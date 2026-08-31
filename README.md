@@ -1,11 +1,19 @@
-# Finance Project Manager (FPM)
+<div style="text-align: center" align="center">
+  <img src="assets/banner_dark.svg" alt="FPM Banner">
+</div>
+<div style="text-align: center" align="center">
+  <a href="https://github.com/luca-naujoks/fpm/actions?query=branch%3Adevelopment">
+    <img src="https://img.shields.io/github/actions/workflow/status/luca-naujoks/fpm/ghcr_build.yml?style=for-the-badge" alt="GitHub Workflow Status">
+  </a>
+</div>
 
-A simple virtual budget-management app for tracking project finances. Built with Vite + SolidJS, Go, and SQLite.
+A simple virtual budget-management application for tracking project finances.\
+Built with Vite + SolidJS, Go, and SQLite.
 
 ## What you get?
 
 - a single Binary
-- minimal Resource footprintÏ
+- minimal Resource footprint
 - approximately 12MB in size
 
 ## Key Features
@@ -50,8 +58,8 @@ docker run -p 80:80 fpm
 ```yaml
 services:
   fpm:
-    container_name: financial-project-management-v2
-    image: ghcr.io/luca-naujoks/fpm:v2.0
+    container_name: financial-project-manager
+    image: ghcr.io/luca-naujoks/fpm:latest
     ports:
       - "80:80"
     volumes:

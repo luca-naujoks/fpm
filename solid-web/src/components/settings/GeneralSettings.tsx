@@ -13,7 +13,7 @@ export function GeneralSettings() {
     }
 
     return (
-        <section class="rounded-xl border border-border bg-surface col-span-3">
+        <section data-testid={"general_settings_container"} class="rounded-xl border border-border bg-surface col-span-3">
             <header class="border-b border-border px-6 py-5">
                 <div class="flex items-center justify-between gap-4">
                     <div class="text-start">
@@ -44,6 +44,7 @@ export function GeneralSettings() {
                 <div class="flex flex-col gap-6">
                     <div class={"flex items-center gap-2"}>
                         <input
+                            data-testid={"light_mode_checkbox"}
                             type="checkbox"
                             checked={lightMode()}
                             placeholder="Home Lab"

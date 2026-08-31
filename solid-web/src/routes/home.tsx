@@ -59,35 +59,39 @@ export default function Home() {
     }
 
     return (
-        <main class="w-full flex flex-col items-start pt-12">
+        <main class="pt-12">
             <CreateProject open={projectFormOpen()} toggle={toggleProjectFormOpen} refresh={refreshProjects}/>
-            <h2>Overview</h2>
-            <div class={["w-full flex flex-col gap-4 mb-8", "md:grid md:grid-cols-2", "lg:grid-cols-4"]}>
-                <Loading fallback={<SkeletonCard/>}>
-                    <NumberCard title={"Total Budget (Monthly)"} value={projectBudget()} currency={true}/>
-                </Loading>
-                <Loading fallback={<SkeletonCard/>}>
-                    <NumberCard title={"Total Spend Budget"} value={spendBudget()} currency={true}/>
-                </Loading>
-                <Loading fallback={<SkeletonCard/>}>
-                    <NumberCard title={"Total Available Budget"} value={availableBudget()} currency={true}/>
-                </Loading>
-                <Loading fallback={<SkeletonCard/>}>
-                    <NumberCard title={"Active Projects"} value={projects().length} currency={false}/>
-                </Loading>
-            </div>
-            <h2>Projects</h2>
-            <div
-                class={["w-full flex flex-col gap-4 mb-8", "md:grid md:grid-cols-2", "lg:grid-cols-3", "xl:grid-cols-4",]}>
-                <Loading fallback={<SkeletonCard class={"min-h-80"}/>}>
-                    <For each={projects()} fallback={
-                        <div class={"col-span-4"}>No Current Projects</div>
-                    }>
-                        {(item) => <ProjectCard project={item}/>}
-                    </For>
-                    <EmptyProjectCard open={() => setProjectFormOpen(true)}/>
-                </Loading>
-            </div>
+            <section class={"w-full flex flex-col items-start"} data-testid={"overview_section"}>
+                <h2>Overview</h2>
+                <div class={["w-full flex flex-col gap-4 mb-8", "md:grid md:grid-cols-2", "lg:grid-cols-4"]}>
+                    <Loading fallback={<SkeletonCard/>}>
+                        <NumberCard title={"Total Budget (Monthly)"} value={projectBudget()} currency={true}/>
+                    </Loading>
+                    <Loading fallback={<SkeletonCard/>}>
+                        <NumberCard title={"Total Spend Budget"} value={spendBudget()} currency={true}/>
+                    </Loading>
+                    <Loading fallback={<SkeletonCard/>}>
+                        <NumberCard title={"Total Available Budget"} value={availableBudget()} currency={true}/>
+                    </Loading>
+                    <Loading fallback={<SkeletonCard/>}>
+                        <NumberCard title={"Active Projects"} value={projects().length} currency={false}/>
+                    </Loading>
+                </div>
+            </section>
+            <section class={"w-full flex flex-col items-start"} data-testid={"project_section"}>
+                <h2>Projects</h2>
+                <div
+                    class={["w-full flex flex-col gap-4 mb-8", "md:grid md:grid-cols-2", "lg:grid-cols-3", "xl:grid-cols-4",]}>
+                    <Loading fallback={<SkeletonCard class={"min-h-80"}/>}>
+                        <For each={projects()} fallback={
+                            <div class={"col-span-4"}>No Current Projects</div>
+                        }>
+                            {(item) => <ProjectCard project={item}/>}
+                        </For>
+                        <EmptyProjectCard open={() => setProjectFormOpen(true)}/>
+                    </Loading>
+                </div>
+            </section>
         </main>
     );
 }

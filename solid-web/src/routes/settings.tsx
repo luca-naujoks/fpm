@@ -43,7 +43,7 @@ export default function Settings() {
         <Loading>
             <main class="w-full mt-4 mb-8">
                 <div class="flex flex-col gap-6 lg:grid lg:grid-cols-4">
-                    <aside class="rounded-xl border border-border bg-surface">
+                    <aside data-testid={"settings_navigation"} class="rounded-xl border border-border bg-surface">
                         <div class="border-b border-border px-4 py-4">
                             <h3 class="text-sm font-semibold uppercase tracking-wider text-foreground/60">
                                 Projects
@@ -80,6 +80,7 @@ export default function Settings() {
 function GeneralSettingsNavButton(props: { selectGeneralProject: () => void }) {
     return (
         <button
+            data-testid={"general_settings_nav_button"}
             type="button" onClick={() => props.selectGeneralProject()}
             class={`w-full rounded-md px-3 py-3 text-left transition text-foreground hover:bg-surface-elevated/50 cursor-pointer`}
         >

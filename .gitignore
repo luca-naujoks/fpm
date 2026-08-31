@@ -14,3 +14,11 @@ web-app/node_modules/
 
 # compiled Go Binary
 financial-planner
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
