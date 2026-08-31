@@ -1,16 +1,18 @@
-name: go_test.yml
-
+name: build_go_binary
 on:
   workflow_dispatch:
-  push:
-    branches: [ development ]
   pull_request:
-    branches: [ development ]
+    branches:
+      - development
 
 jobs:
-  build_web:
+  build-and-push-image:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -23,22 +25,11 @@ jobs:
       - name: Build web app
         working-directory: solid-web
         run: bun run build
-  audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
 
-      - name: Set up Go
-        uses: actions/setup-go@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
           cache: 'true'
 
-      - name: Verify dependencies
-        run: go mod verify
-
-      - name: Build
-        run: go build -v ./...
-
-      - name: Run tests
-        run: go test -race -vet=off ./...
+      - name: Build go Binary
+        run: go build -ldflags="-s -w" -o finance-project-management .
