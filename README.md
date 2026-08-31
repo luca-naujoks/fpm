@@ -6,7 +6,7 @@ A simple virtual budget-management app for tracking project finances. Built with
 
 - a single Binary
 - minimal Resource footprintÏ
-- approximately 10.8MB in size
+- approximately 12MB in size
 
 ## Key Features
 
