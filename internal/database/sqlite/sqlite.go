@@ -82,8 +82,7 @@ func InitTables(db *sql.DB) error {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name     TEXT NOT NULL,
         description TEXT,
-    	budget INTEGER,
-    	pinned INTEGER default 0
+    	budget INTEGER
     );`,
 			`CREATE TABLE IF NOT EXISTS transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

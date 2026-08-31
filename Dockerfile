@@ -27,6 +27,9 @@ RUN go mod download
 # Copy frontend build files
 COPY --from=frontend /app/dist /app/solid-web/dist
 
+# Copy database Migrations
+COPY db/migrations /app/db/migrations
+
 # Copy GO source files
 COPY *.go .
 COPY internal ./internal

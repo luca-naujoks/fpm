@@ -2,6 +2,7 @@ package migrations
 
 import (
 	"database/sql"
+	"embed"
 	"errors"
 	"financial-planner/internal/database/sqlite"
 	"fmt"
@@ -11,7 +12,8 @@ import (
 	"time"
 )
 
-var migrationsPath = "./db/migrations"
+var migrationsPath = "db/migrations"
+var migrationFS embed.FS
 
 type MigrationRunner struct {
 	db *sql.DB
@@ -23,12 +25,14 @@ type MigrationEntry struct {
 	ExecutedAt time.Time `json:"executed_at"`
 }
 
-func MigrationCheck(dsn string) error {
+func MigrationCheck(dsn string, fs embed.FS) error {
 	var openMigrations []os.DirEntry
+
+	migrationFS = fs
 
 	fmt.Println("Running Migration Check")
 
-	migrations, err := os.ReadDir(migrationsPath)
+	migrations, err := migrationFS.ReadDir(migrationsPath)
 	if err != nil {
 		return err
 	}
@@ -124,7 +128,7 @@ func (r MigrationRunner) executeMigration(migrationName string, migrationPath st
 			return err
 		}
 	} else {
-		content, err := os.ReadFile(migrationPath)
+		content, err := migrationFS.ReadFile(migrationPath)
 		if err != nil {
 			return err
 		}
