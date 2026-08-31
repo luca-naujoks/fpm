@@ -1,4 +1,4 @@
-name: go_test.yml
+name: go_test
 
 on:
   workflow_dispatch:
@@ -11,22 +11,20 @@ jobs:
   build_web:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: "1.4.0"
 
-      - name: Install dependencies
+      - name: Install web dependencies
         working-directory: solid-web
         run: bun install --frozen-lockfile
 
-      - name: Build web app
+      - name: Build web application
         working-directory: solid-web
         run: bun run build
-  audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
 
       - name: Set up Go
         uses: actions/setup-go@v7
@@ -38,7 +36,7 @@ jobs:
         run: go mod verify
 
       - name: Build
-        run: go build -v ./...
+        run: go build ldflags="-s -w" -o main .
 
       - name: Run tests
         run: go test -race -vet=off ./...
