@@ -1,0 +1,15 @@
+import type {ParentProps} from 'solid-js';
+
+export default function Document(props: ParentProps) {
+    return (
+        <html lang="en">
+        <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+            <link rel="icon" href="/favicon.svg"/>
+            <title>Finance Project Management</title>
+        </head>
+        <body class="text-center font-sans">{props.children}</body>
+        </html>
+    );
+}

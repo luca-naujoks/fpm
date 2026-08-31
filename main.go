@@ -2,44 +2,98 @@ package main
 
 import (
 	"embed"
+	"financial-planner/internal/api"
 	"financial-planner/internal/database"
 	"financial-planner/internal/jobs"
-	"financial-planner/internal/server"
+	"financial-planner/internal/migrations"
 	"fmt"
+	"io/fs"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/luca-naujoks/webserve"
 )
 
-//go:embed web-app/dist
-var embededContent embed.FS
+//go:embed solid-web/dist/client
+var embeddedContent embed.FS
+
+var databasePath = "./db/sqlite3.db"
 
 func main() {
-	err := database.New()
+	err := migrations.MigrationCheck(databasePath)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err.Error())
+	}
+	fmt.Println("Migration Check done")
+
+	db, err := database.NewDatabase(databasePath, "sqlite3")
+	if err != nil {
+		panic(err.Error())
 	}
 
-	go jobs.NewScheduler()
+	handlers, err := api.NewAPI(db)
+	if err != nil {
+		panic(err.Error())
+	}
 
-	r := server.New(":80", embededContent)
+	go jobs.NewScheduler(db)
 
-	r.GET("/api/projects", server.GetProjects)
-	r.POST("/api/project", server.CreateProject)
-	r.PUT("/api/project", server.EditProject)
-	r.DELETE("/api/project", server.DeleteProject)
+	go runWebAPI(handlers)
 
-	r.GET("/api/project/budget", server.GetProjectBudget)
-	r.GET("/api/spend", server.GetProjectSpend)
+	waitForShutdown(db)
+}
 
-	r.GET("/api/transactions", server.GetTransactions)
-	r.POST("/api/transaction", server.CreateTransactions)
-	r.PUT("/api/transaction", server.EditTransactions)
-	r.DELETE("/api/transaction", server.DeleteTransactions)
-	r.PUT("/api/transaction/import", server.ImportTransactions)
-	r.GET("/api/transaction/export", server.ExportTransactions)
+func runWebAPI(handlers *api.WebHandlers) {
+	webFS, err := fs.Sub(embeddedContent, "solid-web/dist/client")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	r := webserve.New(80, webFS)
+
+	r.Get("/api/projects", handlers.GetProjects)
+	r.Get("/api/projects/spend", handlers.GetProjectSpend)
+	r.Get("/api/projects/pinned", handlers.GetPinnedProjects)
+
+	r.Post("/api/project", handlers.CreateProject)
+
+	r.Get("/api/project/{id}", handlers.GetProject)
+	r.Put("/api/project/{id}/pin", handlers.TogglePinnedProject)
+	r.Put("/api/project/{id}", handlers.EditProject)
+	r.Delete("/api/project/{id}", handlers.DeleteProject)
+
+	r.Get("/api/project/{id}/transactions", handlers.GetTransactions)
+	r.Post("/api/project/{id}/transaction", handlers.CreateTransaction)
+	r.Put("/api/project/{id}/transaction", handlers.EditTransaction)
+	r.Delete("/api/project/{id}/transaction", handlers.DeleteTransaction)
+
+	r.Get("/api/transaction/export", handlers.ExportTransactions)
+	r.Put("/api/transaction/import", handlers.ImportTransactions)
 
 	err = r.Run()
 	if err != nil {
 		fmt.Printf("Server Exited with error: %s", err.Error())
 		return
 	}
+}
+
+func waitForShutdown(db database.Database) {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+
+	//TODO: Shutdown Web API (first needs work at the webserve package)
+
+	//TODO: unregister all jobs from the Scheduler
+
+	err := db.Close()
+	if err != nil {
+		fmt.Printf("error Closing database: %s", err.Error())
+		fmt.Printf("Aborting Shutdown")
+		return
+	}
+
+	log.Println("[INFO] Shutting down...")
 }

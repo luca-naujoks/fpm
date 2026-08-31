@@ -1,0 +1,66 @@
+name: Build Go binaries
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - development
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - name: linux-amd64
+            os: ubuntu-latest
+            binary: finance-project-management-linux-amd64
+
+          - name: windows-amd64
+            os: windows-latest
+            binary: finance-project-management-windows-amd64.exe
+
+          - name: macos-amd64
+            os: macos-latest
+            binary: finance-project-management-macos-amd64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install web dependencies
+        working-directory: solid-web
+        run: bun install --frozen-lockfile
+
+      - name: Build web application
+        working-directory: solid-web
+        run: bun run build
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build Go binary
+        run: go build -ldflags="-s -w" -o "${{ matrix.binary }}" .
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: finance-project-management-${{ matrix.name }}
+          path: ${{ matrix.binary }}
+          if-no-files-found: error

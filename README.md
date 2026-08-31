@@ -1,6 +1,20 @@
-# Finance Project Manager (FPM)
+<div style="text-align: center" align="center">
+  <img src="assets/banner_dark.svg" alt="FPM Banner">
+</div>
+<div style="text-align: center" align="center">
+  <a href="https://github.com/luca-naujoks/fpm/actions?query=branch%3Adevelopment">
+    <img src="https://img.shields.io/github/actions/workflow/status/luca-naujoks/fpm/ghcr_build.yml?style=for-the-badge" alt="GitHub Workflow Status">
+  </a>
+</div>
 
-A simple virtual budget-management app for tracking project finances. Built with Vite + React, Go, and SQLite.
+A simple virtual budget-management application for tracking project finances.\
+Built with Vite + SolidJS, Go, and SQLite.
+
+## What you get?
+
+- a single Binary
+- minimal Resource footprint
+- approximately 12MB in size
 
 ## Key Features
 
@@ -11,7 +25,7 @@ A simple virtual budget-management app for tracking project finances. Built with
 
 ## Tech Stack
 
-- **Frontend**: [Vite+React](https://nextjs.org) with React 19
+- **Frontend**: [Vite+SolidJS](https://www.solidjs.com) with SolidJS 2.0
 - **Database**: SQLite with [Golang SQLite](https://pkg.go.dev/modernc.org/sqlite?utm_source=godoc)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
 
@@ -23,11 +37,20 @@ Build from source and run with Docker:
 # Clone the Git repository
 git clone https://github.com/luca-naujoks/fpm.git
 
+# Navigate into the Frontend directory
+cd solid-web
+
+# Build the Frontend
+bun run build
+
+# Navigate back into the Root directory
+cd ..
+
 # Build the image
 docker build -t fpm .
 
 # Run the container
-docker run -p 3000:3000 fpm
+docker run -p 80:80 fpm
 ```
 
 ## Docker Compose (optional)
@@ -35,10 +58,10 @@ docker run -p 3000:3000 fpm
 ```yaml
 services:
   fpm:
-    container_name: financial-project-management-v2
-    image: ghcr.io/luca-naujoks/fpm:v2.0
+    container_name: financial-project-manager
+    image: ghcr.io/luca-naujoks/fpm:latest
     ports:
-      - "80:6060"
+      - "80:80"
     volumes:
       - ./db:/app/db
     restart: unless-stopped
