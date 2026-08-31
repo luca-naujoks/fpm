@@ -39,7 +39,7 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.4.0"
+          bun-version: latest
 
       - name: Install web dependencies
         working-directory: solid-web
