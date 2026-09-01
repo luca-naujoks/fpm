@@ -5,7 +5,6 @@ import (
 	"financial-planner/internal/api"
 	"financial-planner/internal/database"
 	"financial-planner/internal/jobs"
-	"financial-planner/internal/migrations"
 	"fmt"
 	"io/fs"
 	"log"
@@ -19,19 +18,8 @@ import (
 //go:embed solid-web/dist/client
 var embeddedContent embed.FS
 
-//go:embed db/migrations
-var embeddedMigrations embed.FS
-
-var databasePath = "./db/sqlite3.db"
-
 func main() {
-	err := migrations.MigrationCheck(databasePath, embeddedMigrations)
-	if err != nil {
-		panic(err.Error())
-	}
-	fmt.Println("Migration Check done")
-
-	db, err := database.NewDatabase(databasePath, "sqlite3")
+	db, err := database.NewDatabase("./db/sqlite3.db", "sqlite3")
 	if err != nil {
 		panic(err.Error())
 	}

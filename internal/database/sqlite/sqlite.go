@@ -28,6 +28,11 @@ func NewSqliteDatabase(dsn string) (*SqliteDB, error) {
 			return nil, err
 		}
 
+		err = MigrationCheck(db)
+		if err != nil {
+			return nil, err
+		}
+
 		return &SqliteDB{db}, nil
 	}
 
@@ -57,6 +62,11 @@ func NewSqliteDatabase(dsn string) (*SqliteDB, error) {
 	}
 
 	err = InitTables(database)
+	if err != nil {
+		return nil, err
+	}
+
+	err = MigrationCheck(database)
 	if err != nil {
 		return nil, err
 	}
