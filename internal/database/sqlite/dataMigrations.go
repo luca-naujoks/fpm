@@ -3,6 +3,7 @@ package sqlite
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -70,6 +71,13 @@ func normalizeTransactionDates(tx *sql.Tx) error {
 }
 
 func parseTransactionDate(value string) (time.Time, error) {
+	value = strings.TrimSpace(value)
+
+	// Remove the monotonic-clock suffix produced by time.Time.String().
+	if index := strings.Index(value, " m="); index >= 0 {
+		value = value[:index]
+	}
+
 	formats := []string{
 		time.RFC3339Nano,
 		time.RFC3339,
