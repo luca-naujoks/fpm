@@ -28,6 +28,11 @@ func NewSqliteDatabase(dsn string) (*SqliteDB, error) {
 			return nil, err
 		}
 
+		err = MigrationCheck(db)
+		if err != nil {
+			return nil, err
+		}
+
 		return &SqliteDB{db}, nil
 	}
 
@@ -61,6 +66,11 @@ func NewSqliteDatabase(dsn string) (*SqliteDB, error) {
 		return nil, err
 	}
 
+	err = MigrationCheck(database)
+	if err != nil {
+		return nil, err
+	}
+
 	return &SqliteDB{database}, nil
 }
 
@@ -82,8 +92,7 @@ func InitTables(db *sql.DB) error {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name     TEXT NOT NULL,
         description TEXT,
-    	budget INTEGER,
-    	pinned INTEGER default 0
+    	budget INTEGER
     );`,
 			`CREATE TABLE IF NOT EXISTS transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

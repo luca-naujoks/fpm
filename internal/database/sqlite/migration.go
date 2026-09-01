@@ -1,21 +1,16 @@
-package migrations
+package sqlite
 
 import (
 	"database/sql"
 	"errors"
-	"financial-planner/internal/database/sqlite"
 	"fmt"
+	"io/fs"
 	"os"
-	"path"
 	"strings"
 	"time"
+
+	dbMigrations "financial-planner/db/migrations"
 )
-
-var migrationsPath = "./db/migrations"
-
-type MigrationRunner struct {
-	db *sql.DB
-}
 
 type MigrationEntry struct {
 	Id         int       `json:"id"`
@@ -23,21 +18,20 @@ type MigrationEntry struct {
 	ExecutedAt time.Time `json:"executed_at"`
 }
 
-func MigrationCheck(dsn string) error {
+func MigrationCheck(db *sql.DB) error {
 	var openMigrations []os.DirEntry
 
 	fmt.Println("Running Migration Check")
 
-	migrations, err := os.ReadDir(migrationsPath)
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS schema_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL ,executed_at DateTime)")
 	if err != nil {
 		return err
 	}
 
-	migrationRunner, err := setupMigrationHelper(dsn)
+	migrations, err := fs.ReadDir(dbMigrations.FS, ".")
 	if err != nil {
 		return err
 	}
-	defer migrationRunner.db.Close()
 
 	for _, migration := range migrations {
 		if migration.IsDir() {
@@ -48,7 +42,7 @@ func MigrationCheck(dsn string) error {
 			continue
 		}
 
-		status, err := migrationRunner.isMigrationNeeded(strings.ReplaceAll(migration.Name(), ".sql", ""))
+		status, err := isMigrationNeeded(db, strings.ReplaceAll(migration.Name(), ".sql", ""))
 		if err != nil {
 			return err
 		}
@@ -66,10 +60,7 @@ func MigrationCheck(dsn string) error {
 	for _, entry := range openMigrations {
 		name := strings.ReplaceAll(entry.Name(), ".sql", "")
 
-		fmt.Printf("Executing Migration: %s\n", name)
-
-		migrationPath := path.Join(migrationsPath, entry.Name())
-		err = migrationRunner.executeMigration(name, migrationPath)
+		err = executeMigration(db, name, entry.Name())
 		if err != nil {
 			return err
 		}
@@ -78,25 +69,12 @@ func MigrationCheck(dsn string) error {
 	return nil
 }
 
-func setupMigrationHelper(dsn string) (*MigrationRunner, error) {
-	db, err := sqlite.NewSqliteDatabase(dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	sqlStatement := "CREATE TABLE IF NOT EXISTS schema_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL ,executed_at DateTime)"
-
-	_, err = db.Exec(sqlStatement)
-
-	return &MigrationRunner{db: db.DB}, err
-}
-
-func (r MigrationRunner) isMigrationNeeded(migrationName string) (bool, error) {
+func isMigrationNeeded(db *sql.DB, migrationName string) (bool, error) {
 	var migrationEntry MigrationEntry
 
 	sqlQuery := "SELECT id, name, executed_at FROM schema_migrations WHERE name = ?"
 
-	row := r.db.QueryRow(sqlQuery, migrationName)
+	row := db.QueryRow(sqlQuery, migrationName)
 	err := row.Scan(&migrationEntry.Id, &migrationEntry.Name, &migrationEntry.ExecutedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return true, nil
@@ -109,8 +87,10 @@ func (r MigrationRunner) isMigrationNeeded(migrationName string) (bool, error) {
 	return false, nil
 }
 
-func (r MigrationRunner) executeMigration(migrationName string, migrationPath string) error {
-	tx, err := r.db.Begin()
+func executeMigration(db *sql.DB, migrationName string, migrationPath string) error {
+	fmt.Printf("Executing Migration: %s\n", migrationName)
+
+	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
@@ -124,7 +104,7 @@ func (r MigrationRunner) executeMigration(migrationName string, migrationPath st
 			return err
 		}
 	} else {
-		content, err := os.ReadFile(migrationPath)
+		content, err := fs.ReadFile(dbMigrations.FS, migrationPath)
 		if err != nil {
 			return err
 		}
